@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/terraform"
 )
 
@@ -60,7 +60,27 @@ func doList(src io.Reader) (exitStatus int, errorMessage string) {
 	if err != nil {
 		return 1, "Unable to read state file"
 	}
-	spew.Dump(state)
+
+	i := inventory{}
+	for _, m := range state.Modules {
+		for _, rs := range m.Resources {
+			switch rs.Type {
+			case "openstack_compute_instance_v2":
+				s := rs.Primary
+				instanceName := s.Attributes["name"]
+				addr := s.Attributes["access_ip_v4"]
+				i.AddHostToGroup(addr, instanceName)
+			}
+		}
+	}
+	b, err := json.Marshal(i)
+	if err != nil {
+		return 1, "unable to json.Marshal inventory"
+	}
+	_, err = os.Stdout.Write(b)
+	if err != nil {
+		return 1, "unable to write json to stdout"
+	}
 
 	return 0, ""
 }
