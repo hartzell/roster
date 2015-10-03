@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -34,23 +35,28 @@ func doIt() (exitStatus int, errorMessage string) {
 	}
 
 	if host != "" {
-		return doHost()
+		return doHost(host)
 	}
 
-	return doList()
+	file := "terraform.tfstate"
+	if flag.Arg(0) != "" {
+		file = flag.Arg(0)
+	}
+	f, err := os.Open(file)
+	if err != nil {
+		return 1, "Unable to open state file "
+	}
+
+	return doList(f)
 }
 
-func doHost() (exitStatus int, errorMessage string) {
+func doHost(host string) (exitStatus int, errorMessage string) {
 	fmt.Println("{}")
 	return 0, ""
 }
 
-func doList() (exitStatus int, errorMessage string) {
-	f, err := os.Open("terraform.tfstate")
-	if err != nil {
-		return 1, "Unable to open state file "
-	}
-	state, err := terraform.ReadState(f)
+func doList(src io.Reader) (exitStatus int, errorMessage string) {
+	state, err := terraform.ReadState(src)
 	if err != nil {
 		return 1, "Unable to read state file"
 	}
