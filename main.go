@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/hashicorp/terraform/builtin/providers/openstack"
+	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
 
@@ -66,9 +68,38 @@ func doList(src io.Reader) (exitStatus int, errorMessage string) {
 		for _, rs := range m.Resources {
 			switch rs.Type {
 			case "openstack_compute_instance_v2":
-				s := rs.Primary
-				instanceName := s.Attributes["name"]
-				addr := s.Attributes["access_ip_v4"]
+				// Thanks to @apparentlymart for this bit of code that pulls
+				// values out of the state file info.  It's a bit underhanded
+				// and behind terraform's public interface, but until there's
+				// a better way....  See:
+				// https://github.com/hashicorp/terraform/issues/3405
+				provider := openstack.Provider().(*schema.Provider)
+				instanceSchema := provider.ResourcesMap["openstack_compute_instance_v2"].Schema
+				stateReader := &schema.MapFieldReader{
+					Schema: instanceSchema,
+					Map:    schema.BasicMapReader(rs.Primary.Attributes),
+				}
+				metadataResult, err := stateReader.ReadField([]string{"metadata"})
+				if err != nil {
+					return 1, "dammit"
+				}
+
+				for a, b := range metadataResult.ValueOrZero(instanceSchema["metadata"]).(map[string]interface{}) {
+					fmt.Println(a, "=", b)
+				}
+				nameResult, err := stateReader.ReadField([]string{"name"})
+				if err != nil {
+					return 1, "dammit #2"
+				}
+				fmt.Println("name = ", nameResult.ValueOrZero(instanceSchema["name"]).(string))
+				accessResult, err := stateReader.ReadField([]string{"access_ip_v4"})
+				if err != nil {
+					return 1, "dammit #3"
+				}
+				fmt.Println("access_ip_v4 = ",
+					accessResult.ValueOrZero(instanceSchema["access_ip_v4"]).(string))
+				instanceName := rs.Primary.Attributes["name"]
+				addr := rs.Primary.Attributes["access_ip_v4"]
 				i.AddHostToGroup(addr, instanceName)
 			}
 		}
