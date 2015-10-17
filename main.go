@@ -9,7 +9,9 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"text/template"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/builtin/providers/openstack"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -66,11 +68,13 @@ func doList(src io.Reader) (exitStatus int, errorMessage string) {
 	}
 
 	i := inventory{}
+	instances := []*instanceInfo{}
 	for _, m := range state.Modules {
 		for _, rs := range m.Resources {
 			switch rs.Type {
 			case "openstack_compute_instance_v2":
 				info, _ := parse_os_compute_instance_v2(rs)
+				instances = append(instances, info)
 				// create a weird little group just for this instance, so that
 				// plays can refer to it by "name", which is known ahead of
 				// time.
@@ -90,6 +94,15 @@ func doList(src io.Reader) (exitStatus int, errorMessage string) {
 			}
 		}
 	}
+	t, err := template.ParseFiles("etcHostsTemplate")
+	if err != nil {
+		panic(err)
+	}
+	err = t.Execute(os.Stdout, instances)
+	if err != nil {
+		panic(err)
+	}
+
 	b, err := json.Marshal(i)
 	if err != nil {
 		return 1, "unable to json.Marshal inventory"
@@ -99,7 +112,21 @@ func doList(src io.Reader) (exitStatus int, errorMessage string) {
 		return 1, "unable to write json to stdout"
 	}
 
+	_ = gatherGroups(instances)
 	return 0, ""
+}
+
+// Converts a slice of instances (each of which might belong to one or
+// more groups) into a map of group names to slices of members.
+func gatherGroups(instances []*instanceInfo) map[string][]string {
+	groups := map[string][]string{}
+	for _, i := range instances {
+		for _, g := range i.Groups {
+			groups[g] = append(groups[g], i.Address)
+		}
+	}
+	spew.Dump(groups)
+	return groups
 }
 
 type instanceInfo struct {

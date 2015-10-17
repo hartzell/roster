@@ -1,0 +1,4 @@
+# A simple list host database
+# courtesy of terraform and roster
+{{range .}}{{.Address}}	{{.Name}}
+{{end}}
