@@ -15,33 +15,93 @@ import (
 	"github.com/hashicorp/terraform/builtin/providers/openstack"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/mitchellh/cli"
 )
 
 func main() {
 
-	exitStatus, err := doIt()
-	if exitStatus != 0 {
+	ui := &cli.BasicUi{
+		Reader:      os.Stdin,
+		Writer:      os.Stdout,
+		ErrorWriter: os.Stderr,
+	}
+
+	args := os.Args[1:]
+
+	exitStatus, err := doIt(ui, args)
+	if exitStatus != 0 && err != nil {
 		log.Println(err)
 	}
 
 	os.Exit(exitStatus)
 }
 
-func doIt() (exitStatus int, errorMessage string) {
-	var list bool
-	var host string
+func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 
-	flag.BoolVar(&list, "list", false, "Run the list command")
-	flag.StringVar(&host, "host", "", "specify a host")
-	flag.Parse()
+	c := cli.NewCLI("roster", "0.0.1")
 
-	if list && host != "" {
-		return 1,
-			"Provide either \"--list\" or \"--host\", not both (\"--help\" for help)."
+	c.Args = args
+	c.Commands = map[string]cli.CommandFactory{
+		"inventory": func() (cli.Command, error) {
+			return &InventoryCommand{
+				Ui: ui,
+			}, nil
+		},
+		// default command is "inventory"
+		"": func() (cli.Command, error) {
+			return &DefaultInventoryCommand{
+				Ui:  ui,
+				cli: *c,
+			}, nil
+		},
+		"hosts": func() (cli.Command, error) {
+			return &HostsCommand{
+				Ui: ui,
+			}, nil
+		},
+		"dump-template": func() (cli.Command, error) {
+			return &DumpTemplateCommand{
+				Ui: ui,
+			}, nil
+		},
+		"execute-template": func() (cli.Command, error) {
+			return &ExecuteTemplateCommand{
+				Ui: ui,
+			}, nil
+		},
 	}
 
-	if host != "" {
-		return doHost(host)
+	exitStatus, err = c.Run()
+	return
+}
+
+//
+// Implement the "inventory" command
+
+type InventoryCommand struct {
+	List bool
+	Host string
+	Ui   cli.Ui
+}
+
+func (c *InventoryCommand) Run(args []string) int {
+	cmdFlags := flag.NewFlagSet("inventory", flag.ContinueOnError)
+	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
+
+	cmdFlags.BoolVar(&c.List, "list", false, "Generate a full inventory")
+	cmdFlags.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
+	if err := cmdFlags.Parse(args); err != nil {
+		return 1
+	}
+
+	if c.List && c.Host != "" {
+		c.Ui.Error("Must specify either --list or --host, not both!")
+		return 1
+	}
+
+	if c.Host != "" {
+		status, _ := doHost(c.Host)
+		return status
 	}
 
 	file := "terraform.tfstate"
@@ -50,11 +110,110 @@ func doIt() (exitStatus int, errorMessage string) {
 	}
 	f, err := os.Open(file)
 	if err != nil {
-		return 1, "Unable to open state file "
+		return 1
 	}
+	defer f.Close()
 
-	return doList(f)
+	status, _ := doList(f)
+	return status
 }
+
+func (c *InventoryCommand) Help() string {
+	return "(h) Generate an Ansible dynamic inventory."
+}
+
+func (c *InventoryCommand) Synopsis() string {
+	return "(s) Generate an Ansible dynamic inventory"
+}
+
+//
+// Implement the default command (inventory, except help is different)
+
+type DefaultInventoryCommand struct {
+	List bool
+	Host string
+	Ui   cli.Ui
+	cli  cli.CLI
+}
+
+func (c *DefaultInventoryCommand) Run(args []string) int {
+	ic := InventoryCommand{
+		List: c.List,
+		Host: c.Host,
+		Ui:   c.Ui,
+	}
+	return ic.Run(args)
+}
+
+func (c *DefaultInventoryCommand) Help() string {
+	return c.cli.HelpFunc(c.cli.Commands) + "\n"
+}
+
+func (c *DefaultInventoryCommand) Synopsis() string {
+	return ""
+}
+
+//
+// Implement the "hosts" command
+
+type HostsCommand struct {
+	Ui cli.Ui
+}
+
+func (c *HostsCommand) Run(_ []string) int {
+	c.Ui.Output("Calling HostsCommand.Run")
+	return 0
+}
+
+func (c *HostsCommand) Help() string {
+	return "Generate an Ansible dynamic inventory for a specific host (no op)."
+}
+
+func (c *HostsCommand) Synopsis() string {
+	return "Generate an Ansible dynamic inventory for a specific host (no op)"
+}
+
+//
+// Implement the "dump-template" command
+
+type DumpTemplateCommand struct {
+	Ui cli.Ui
+}
+
+func (c *DumpTemplateCommand) Run(_ []string) int {
+	c.Ui.Output("Calling DumpTemplateCommand.Run")
+	return 0
+}
+
+func (c *DumpTemplateCommand) Help() string {
+	return "Dump one of roster's built in templates."
+}
+
+func (c *DumpTemplateCommand) Synopsis() string {
+	return "Dump one of roster's built in templates."
+}
+
+//
+// Implement the "execute-template" command
+
+type ExecuteTemplateCommand struct {
+	Ui cli.Ui
+}
+
+func (c *ExecuteTemplateCommand) Run(_ []string) int {
+	c.Ui.Output("Calling ExecuteTemplateCommand.Run")
+	return 0
+}
+
+func (c *ExecuteTemplateCommand) Help() string {
+	return "Execute a user supplied template."
+}
+
+func (c *ExecuteTemplateCommand) Synopsis() string {
+	return "Execute a user supplied template."
+}
+
+// -----
 
 func doHost(host string) (exitStatus int, errorMessage string) {
 	fmt.Println("{}")
