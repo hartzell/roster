@@ -1,4 +1,4 @@
-# A simple list host database
+# A simple host database
 # courtesy of terraform and roster
 {{range .}}{{.Address}}	{{.Name}}
 {{end}}
