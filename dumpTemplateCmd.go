@@ -1,16 +1,35 @@
 package main
 
-import "github.com/mitchellh/cli"
+import (
+	"flag"
+	"fmt"
+
+	"github.com/mitchellh/cli"
+)
 
 //
 // Implement the "dump-template" command
 
 type DumpTemplateCommand struct {
-	Ui cli.Ui
+	Template string
+	Ui       cli.Ui
 }
 
-func (c *DumpTemplateCommand) Run(_ []string) int {
-	c.Ui.Output("Calling DumpTemplateCommand.Run")
+func (c *DumpTemplateCommand) Run(args []string) int {
+	cmdFlags := flag.NewFlagSet("dumpTemplate", flag.ContinueOnError)
+	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
+
+	cmdFlags.StringVar(&c.Template, "template", "", "The name of the template to dump.")
+	if err := cmdFlags.Parse(args); err != nil {
+		return 1
+	}
+
+	if c.Template == "" {
+		c.Ui.Output(c.Help())
+		return 1
+	}
+
+	c.Ui.Output(fmt.Sprintf("Calling DumpTemplateCommand.Run: %s", c.Template))
 	return 0
 }
 
