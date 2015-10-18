@@ -3,10 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"regexp"
 	"text/template"
@@ -30,7 +28,7 @@ func main() {
 
 	exitStatus, err := doIt(ui, args)
 	if exitStatus != 0 && err != nil {
-		log.Println(err)
+		ui.Error(err.Error())
 	}
 
 	os.Exit(exitStatus)
@@ -47,7 +45,7 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 				Ui: ui,
 			}, nil
 		},
-		// default command is "inventory"
+		// default command is "inventory", with some hacks for usage/synopsis
 		"": func() (cli.Command, error) {
 			return &DefaultInventoryCommand{
 				Ui:  ui,
@@ -73,144 +71,6 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 
 	exitStatus, err = c.Run()
 	return
-}
-
-//
-// Implement the "inventory" command
-
-type InventoryCommand struct {
-	List bool
-	Host string
-	Ui   cli.Ui
-}
-
-func (c *InventoryCommand) Run(args []string) int {
-	cmdFlags := flag.NewFlagSet("inventory", flag.ContinueOnError)
-	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
-
-	cmdFlags.BoolVar(&c.List, "list", false, "Generate a full inventory")
-	cmdFlags.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
-	if err := cmdFlags.Parse(args); err != nil {
-		return 1
-	}
-
-	if c.List && c.Host != "" {
-		c.Ui.Error("Must specify either --list or --host, not both!")
-		return 1
-	}
-
-	if c.Host != "" {
-		status, _ := doHost(c.Host)
-		return status
-	}
-
-	file := "terraform.tfstate"
-	if flag.Arg(0) != "" {
-		file = flag.Arg(0)
-	}
-	f, err := os.Open(file)
-	if err != nil {
-		return 1
-	}
-	defer f.Close()
-
-	status, _ := doList(f)
-	return status
-}
-
-func (c *InventoryCommand) Help() string {
-	return "(h) Generate an Ansible dynamic inventory."
-}
-
-func (c *InventoryCommand) Synopsis() string {
-	return "(s) Generate an Ansible dynamic inventory"
-}
-
-//
-// Implement the default command (inventory, except help is different)
-
-type DefaultInventoryCommand struct {
-	List bool
-	Host string
-	Ui   cli.Ui
-	cli  cli.CLI
-}
-
-func (c *DefaultInventoryCommand) Run(args []string) int {
-	ic := InventoryCommand{
-		List: c.List,
-		Host: c.Host,
-		Ui:   c.Ui,
-	}
-	return ic.Run(args)
-}
-
-func (c *DefaultInventoryCommand) Help() string {
-	return c.cli.HelpFunc(c.cli.Commands) + "\n"
-}
-
-func (c *DefaultInventoryCommand) Synopsis() string {
-	return ""
-}
-
-//
-// Implement the "hosts" command
-
-type HostsCommand struct {
-	Ui cli.Ui
-}
-
-func (c *HostsCommand) Run(_ []string) int {
-	c.Ui.Output("Calling HostsCommand.Run")
-	return 0
-}
-
-func (c *HostsCommand) Help() string {
-	return "Generate an Ansible dynamic inventory for a specific host (no op)."
-}
-
-func (c *HostsCommand) Synopsis() string {
-	return "Generate an Ansible dynamic inventory for a specific host (no op)"
-}
-
-//
-// Implement the "dump-template" command
-
-type DumpTemplateCommand struct {
-	Ui cli.Ui
-}
-
-func (c *DumpTemplateCommand) Run(_ []string) int {
-	c.Ui.Output("Calling DumpTemplateCommand.Run")
-	return 0
-}
-
-func (c *DumpTemplateCommand) Help() string {
-	return "Dump one of roster's built in templates."
-}
-
-func (c *DumpTemplateCommand) Synopsis() string {
-	return "Dump one of roster's built in templates."
-}
-
-//
-// Implement the "execute-template" command
-
-type ExecuteTemplateCommand struct {
-	Ui cli.Ui
-}
-
-func (c *ExecuteTemplateCommand) Run(_ []string) int {
-	c.Ui.Output("Calling ExecuteTemplateCommand.Run")
-	return 0
-}
-
-func (c *ExecuteTemplateCommand) Help() string {
-	return "Execute a user supplied template."
-}
-
-func (c *ExecuteTemplateCommand) Synopsis() string {
-	return "Execute a user supplied template."
 }
 
 // -----
