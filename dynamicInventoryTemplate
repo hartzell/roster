@@ -1,0 +1,19 @@
+{
+    {{if have hostvars to deal with}}"_meta": {
+        "hostvars": {
+            {{range ...}}"{{.Address}}": [
+                {{range ...}}"{{key}}": "{{value}}"
+                {{end}}
+            ]
+            {{end}}
+        }
+    },
+    {{end}}
+    {{range ...}}"{{groupName}}": {
+        "hosts": [
+            {{range ...}}{{Address}}
+            {{end}}
+        ]
+    }
+    {{end}}
+}
