@@ -3,9 +3,9 @@ package main
 //
 import (
 	"bytes"
-	"errors"
 	"flag"
 	"fmt"
+	"strings"
 	"text/template"
 
 	"github.com/mitchellh/cli"
@@ -67,7 +67,14 @@ func (c *InventoryCommand) doFullInventory() error {
 		return fmt.Errorf("Unable to parseState: %s", err)
 	}
 
-	t, err := template.ParseFiles("dynamicInventoryTemplate")
+	funcMap := template.FuncMap{
+		"groups": groups,
+		"join":   strings.Join,
+		"quote":  quote,
+		"blah":   blah,
+	}
+
+	t, err := template.New("dynamicInventoryTemplate").Funcs(funcMap).ParseFiles("dynamicInventoryTemplate")
 	if err != nil {
 		return fmt.Errorf("Unable to parse dynamicInventoryTemplate: %s", err)
 	}
@@ -75,7 +82,7 @@ func (c *InventoryCommand) doFullInventory() error {
 	output := bytes.NewBuffer([]byte{})
 	err = t.Execute(output, instances)
 	if err != nil {
-		return errors.New("Unable to execute dynamicInventoryTemplate")
+		return fmt.Errorf("Unable to execute dynamicInventoryTemplate: %s", err)
 	}
 
 	c.Ui.Output(output.String())

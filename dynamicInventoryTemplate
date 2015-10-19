@@ -1,19 +1,9 @@
 {
-    {{if have hostvars to deal with}}"_meta": {
-        "hostvars": {
-            {{range ...}}"{{.Address}}": [
-                {{range ...}}"{{key}}": "{{value}}"
-                {{end}}
-            ]
-            {{end}}
-        }
-    },
-    {{end}}
-    {{range ...}}"{{groupName}}": {
+    {{range $group, $hosts := groups .}}"{{$group}}": {
+        "blah": {{blah $hosts }}
         "hosts": [
-            {{range ...}}{{Address}}
-            {{end}}
+            {{$hosts := quote $hosts}}{{join $hosts ", "}}
         ]
-    }
+    },
     {{end}}
 }
