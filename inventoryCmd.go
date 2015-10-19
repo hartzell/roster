@@ -2,8 +2,11 @@ package main
 
 //
 import (
+	"bytes"
+	"errors"
 	"flag"
-	"os"
+	"fmt"
+	"text/template"
 
 	"github.com/mitchellh/cli"
 )
@@ -32,22 +35,51 @@ func (c *InventoryCommand) Run(args []string) int {
 	}
 
 	if c.Host != "" {
-		status, _ := doHost(c.Host)
-		return status
-	}
-
-	file := "terraform.tfstate"
-	if flag.Arg(0) != "" {
-		file = flag.Arg(0)
-	}
-	f, err := os.Open(file)
-	if err != nil {
+		err := c.doHostInventory(c.Host)
+		if err != nil {
+			c.Ui.Error(err.Error())
+		}
 		return 1
 	}
-	defer f.Close()
 
-	status, _ := doList(f)
-	return status
+	err := c.doFullInventory()
+	if err != nil {
+		c.Ui.Error(err.Error())
+		return 1
+	}
+
+	return 0
+}
+
+func (c *InventoryCommand) doHostInventory(host string) error {
+	c.Ui.Output("{}")
+	return nil
+}
+
+func (c *InventoryCommand) doFullInventory() error {
+	state, err := fetchState(".")
+	if err != nil {
+		return fmt.Errorf("Unable to fetchState: %s", err)
+	}
+
+	instances, err := parseState(*state)
+	if err != nil {
+		return fmt.Errorf("Unable to parseState: %s", err)
+	}
+
+	t, err := template.ParseFiles("dynamicInventoryTemplate")
+	if err != nil {
+		return fmt.Errorf("Unable to parse dynamicInventoryTemplate: %s", err)
+	}
+
+	output := bytes.NewBuffer([]byte{})
+	err = t.Execute(output, instances)
+	if err != nil {
+		return errors.New("Unable to execute dynamicInventoryTemplate")
+	}
+
+	c.Ui.Output(output.String())
+	return nil
 }
 
 func (c *InventoryCommand) Help() string {

@@ -1,6 +1,11 @@
 package main
 
-import "github.com/mitchellh/cli"
+import (
+	"bytes"
+	"text/template"
+
+	"github.com/mitchellh/cli"
+)
 
 //
 // Implement the "hosts" command
@@ -10,14 +15,35 @@ type HostsCommand struct {
 }
 
 func (c *HostsCommand) Run(_ []string) int {
-	c.Ui.Output("Calling HostsCommand.Run")
+	state, err := fetchState(".")
+	if err != nil {
+		return 1
+	}
+
+	instances, err := parseState(*state)
+	if err != nil {
+		return 1
+	}
+
+	t, err := template.ParseFiles("etcHostsTemplate")
+	if err != nil {
+		return 1
+	}
+
+	output := bytes.NewBuffer([]byte{})
+	err = t.Execute(output, instances)
+	if err != nil {
+		return 1
+	}
+
+	c.Ui.Output(output.String())
 	return 0
 }
 
 func (c *HostsCommand) Help() string {
-	return "Generate an Ansible dynamic inventory for a specific host (no op)."
+	return "Generate an /etc/hosts fragment for the Terraform instances"
 }
 
 func (c *HostsCommand) Synopsis() string {
-	return "Generate an Ansible dynamic inventory for a specific host (no op)"
+	return "Generate an /etc/hosts fragment for the Terraform instances"
 }
