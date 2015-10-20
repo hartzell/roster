@@ -1,38 +1,39 @@
 package main
 
-import (
-	"encoding/json"
-	"html/template"
-)
+type Group struct {
+	Name  string
+	Hosts []string
+}
+type Groups map[string]*Group
 
-type Group []string
-type Groups map[string][]string
-
-func groups(instances []*instanceInfo) Groups {
+func groups(instances []*instanceInfo, foo bool) []*Group {
 	groups := Groups{}
 	for _, i := range instances {
-		// add a group for each individual
-		groups[i.Name] = append(groups[i.Name], i.Address)
-
+		if foo {
+			// add a group for each individual
+			if groups[i.Name] == nil {
+				groups[i.Name] = &Group{Name: i.Name}
+			}
+			groups[i.Name].Hosts = append(groups[i.Name].Hosts, i.Address)
+		}
 		// walk over the individuals group and add it to them
 		for _, g := range i.Groups {
-			groups[g] = append(groups[g], i.Address)
+			// groups[g] = append(groups[g], i.Address)
+			if groups[g] == nil {
+				groups[g] = &Group{Name: g}
+			}
+			groups[g].Hosts = append(groups[g].Hosts, i.Address)
 		}
 	}
-	return groups
+
+	return ensliceGroups(groups)
 }
 
-func quote(strings []string) []string {
-	q := []string{}
-	for _, s := range strings {
-		// q = append(q, "\""+s+"\"")
-		s, _ := json.Marshal(template.JSEscapeString(s))
-		q = append(q, string(s))
+func ensliceGroups(groups Groups) []*Group {
+	// apparently it's faster to use make and index, but it's small, so...
+	result := []*Group{}
+	for _, g := range groups {
+		result = append(result, g)
 	}
-	return q
-}
-
-func blah(strings []string) string {
-	s, _ := json.Marshal(strings)
-	return string(s)
+	return result
 }

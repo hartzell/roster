@@ -1,0 +1,7 @@
+{    {{range $index, $group := groups . true}}{{if $index}},{{end}}
+    "{{js $group.Name}}": {
+        "hosts": [{{range $host_index, $host := $group.Hosts}}{{if $host_index}},{{end}}
+            "{{js $host}}"{{end}}
+        ]
+    }{{end}}
+}

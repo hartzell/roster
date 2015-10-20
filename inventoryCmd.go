@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"strings"
 	"text/template"
 
 	"github.com/mitchellh/cli"
@@ -69,12 +68,14 @@ func (c *InventoryCommand) doFullInventory() error {
 
 	funcMap := template.FuncMap{
 		"groups": groups,
-		"join":   strings.Join,
-		"quote":  quote,
-		"blah":   blah,
 	}
 
-	t, err := template.New("dynamicInventoryTemplate").Funcs(funcMap).ParseFiles("dynamicInventoryTemplate")
+	tString, err := FSString(false, "/templates/dynamicInventoryTemplate")
+	if err != nil {
+		return fmt.Errorf("Unable to read dynamicInventoryTemplate: %s", err)
+	}
+
+	t, err := template.New("dynamicInventoryTemplate").Funcs(funcMap).Parse(tString)
 	if err != nil {
 		return fmt.Errorf("Unable to parse dynamicInventoryTemplate: %s", err)
 	}

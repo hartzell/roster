@@ -1,9 +1,0 @@
-{
-    {{range $group, $hosts := groups .}}"{{$group}}": {
-        "blah": {{blah $hosts }}
-        "hosts": [
-            {{$hosts := quote $hosts}}{{join $hosts ", "}}
-        ]
-    },
-    {{end}}
-}
