@@ -26,10 +26,6 @@ func groups(instances []*instanceInfo, foo bool) []*Group {
 		}
 	}
 
-	return ensliceGroups(groups)
-}
-
-func ensliceGroups(groups Groups) []*Group {
 	// apparently it's faster to use make and index, but it's small, so...
 	result := []*Group{}
 	for _, g := range groups {
