@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"os"
 	"text/template"
 
 	"github.com/mitchellh/cli"
@@ -71,7 +72,8 @@ func (c *InventoryCommand) doFullInventory() error {
 		"hostvars": hostvars,
 	}
 
-	tString, err := FSString(true, "/templates/dynamicInventoryTemplate")
+	useLocal := os.Getenv("ROSTER_DEV") == "1"
+	tString, err := FSString(useLocal, "/templates/dynamicInventoryTemplate")
 	if err != nil {
 		return fmt.Errorf("Unable to read dynamicInventoryTemplate: %s", err)
 	}
