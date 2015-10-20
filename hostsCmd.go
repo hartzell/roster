@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
 	"github.com/mitchellh/cli"
@@ -25,8 +26,15 @@ func (c *HostsCommand) Run(_ []string) int {
 		return 1
 	}
 
-	t, err := template.ParseFiles("etcHostsTemplate")
+	tString, err := FSString(false, "/templates/etcHostsTemplate")
 	if err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to read etcHostsTemplate: %s", err))
+		return 1
+	}
+
+	t, err := template.New("etcHostsTemplate").Parse(tString)
+	if err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse etcHostsTemplate: %s", err))
 		return 1
 	}
 
