@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/mitchellh/cli"
 )
@@ -25,16 +26,22 @@ func (c *DumpTemplateCommand) Run(args []string) int {
 	}
 
 	if c.Template == "" {
-		c.Ui.Output(c.Help())
+		c.Ui.Error("Missing template argument\n" + c.Help())
 		return 1
 	}
 
-	c.Ui.Output(fmt.Sprintf("Calling DumpTemplateCommand.Run: %s", c.Template))
+	useLocal := os.Getenv("ROSTER_DEV") == "1"
+	tString, err := FSString(useLocal, c.Template)
+	if err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to read template: %s", err))
+	}
+
+	c.Ui.Output(tString)
 	return 0
 }
 
 func (c *DumpTemplateCommand) Help() string {
-	return "Dump one of roster's built in templates."
+	return "(h) Dump one of roster's built in templates."
 }
 
 func (c *DumpTemplateCommand) Synopsis() string {
