@@ -188,13 +188,13 @@ var _escData = map[string]*_escFile{
 
 	"/templates/dynamicInventoryTemplate": {
 		local:   "templates/dynamicInventoryTemplate",
-		size:    437,
-		modtime: 1445361465,
+		size:    581,
+		modtime: 1445362749,
 		compressed: `
-H4sIAAAJbogA/4RQywrCMBC8+xVL6bH0AwrePfkDIiXQtVZoK2kqwrL/bjYPJanoHsp2mJ2ZDO3ATtGO
-aFTRgP910HVezEPpJUFliLSaeoRymDp8VlAKE5o9xAuomYmGS2AwV0Q4dcyJTEF0W/xxfVQjMm+cOPNN
-Rfzmv5tMvZ7Xu4Ryi40ERq/4K1fI4/jfArlCpI3T20yQNm8hKByEHf0+xP9lWNuccfYvjTC/AgAA//+P
-o4jKtQEAAA==
+H4sIAAAJbogA/4SRzaqEMAyF9z5FEJfiAwh3f1d36eYySMGOo4w61B8GSt59mrRWLcq4EDk5+RJPdATm
+0bq5w2MYp0WoETJEVuOyk5OIc7AmllYTqaZNib6WkDR9Jd8pJFSF/OeAYrZ1IKZay75yfA/Vuh1tc/Zr
+XohHemvIC2GtpTDgFdteIHfYJfsTnWSmVwrxnEk6a8VQtF/HOTy9VsP8Mv8IkyKaKwSRsImWD9zXsbgt
+2b/tHtyADvDvh5FShkdwBErU57UZv9/iJJ9btE9oreInAAD///qI9C9FAgAA
 `,
 	},
 
