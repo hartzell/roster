@@ -67,10 +67,11 @@ func (c *InventoryCommand) doFullInventory() error {
 	}
 
 	funcMap := template.FuncMap{
-		"groups": groups,
+		"groups":   groups,
+		"hostvars": hostvars,
 	}
 
-	tString, err := FSString(false, "/templates/dynamicInventoryTemplate")
+	tString, err := FSString(true, "/templates/dynamicInventoryTemplate")
 	if err != nil {
 		return fmt.Errorf("Unable to read dynamicInventoryTemplate: %s", err)
 	}

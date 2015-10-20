@@ -1,7 +1,17 @@
-{    {{range $index, $group := groups . true}}{{if $index}},{{end}}
+{
+    {{if hostvars .}}
+    "_meta": {
+        "hostvars": { {{range $index, $host := hostvars .}}{{if $index}},{{end}}
+            "{{js $host.Host}}": { {{range $j, $v := $host.Vars}}{{if $j}},{{end}}
+                "{{js $v.Name}}": "{{js $v.Value}}"{{end}}
+            }{{end}}
+        }
+    },{{end}}
+    {{if groups . true}}
+    {{range $index, $group := groups . true}}{{if $index}},{{end}}
     "{{js $group.Name}}": {
         "hosts": [{{range $host_index, $host := $group.Hosts}}{{if $host_index}},{{end}}
             "{{js $host}}"{{end}}
         ]
-    }{{end}}
+    }{{end}}{{end}}
 }
