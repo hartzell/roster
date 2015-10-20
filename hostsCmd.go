@@ -23,6 +23,7 @@ func (c *HostsCommand) Run(_ []string) int {
 
 	instances, err := parseState(*state)
 	if err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse state file: %s", err))
 		return 1
 	}
 
@@ -41,6 +42,7 @@ func (c *HostsCommand) Run(_ []string) int {
 	output := bytes.NewBuffer([]byte{})
 	err = t.Execute(output, instances)
 	if err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to execute hosts template: %s", err))
 		return 1
 	}
 
