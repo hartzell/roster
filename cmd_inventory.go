@@ -3,29 +3,31 @@ package main
 //
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"os"
 	"text/template"
-
-	"github.com/mitchellh/cli"
 )
 
 // Implement the "inventory" command
 
 type InventoryCommand struct {
+	DefaultCommand
 	List bool
 	Host string
-	Ui   cli.Ui
 }
 
-func (c *InventoryCommand) Run(args []string) int {
-	cmdFlags := flag.NewFlagSet("inventory", flag.ContinueOnError)
-	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
+//func (c *InventoryCommand) NewFlagSet() *flag.FlagSet {
+//	fs := c.DefaultFlagSet()
+//	return fs
+//}
 
-	cmdFlags.BoolVar(&c.List, "list", false, "Generate a full inventory")
-	cmdFlags.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
-	if err := cmdFlags.Parse(args); err != nil {
+func (c *InventoryCommand) Run(args []string) int {
+	c.InitFlagSet()
+
+	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
+	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
+	if err := c.FS.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
 		return 1
 	}
 
@@ -57,7 +59,7 @@ func (c *InventoryCommand) doHostInventory(host string) error {
 }
 
 func (c *InventoryCommand) doFullInventory() error {
-	state, err := fetchState(".")
+	state, err := fetchState(c.Dir)
 	if err != nil {
 		return fmt.Errorf("Unable to fetchState: %s", err)
 	}
@@ -91,10 +93,6 @@ func (c *InventoryCommand) doFullInventory() error {
 
 	c.Ui.Output(output.String())
 	return nil
-}
-
-func (c *InventoryCommand) Help() string {
-	return "(h) Generate an Ansible dynamic inventory."
 }
 
 func (c *InventoryCommand) Synopsis() string {

@@ -1,27 +1,24 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
-
-	"github.com/mitchellh/cli"
 )
 
 //
 // Implement the "dump-template" command
 
 type DumpTemplateCommand struct {
+	DefaultCommand
 	Template string
-	Ui       cli.Ui
 }
 
 func (c *DumpTemplateCommand) Run(args []string) int {
-	cmdFlags := flag.NewFlagSet("dumpTemplate", flag.ContinueOnError)
-	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
+	c.InitFlagSet()
 
-	cmdFlags.StringVar(&c.Template, "template", "", "The name of the template to dump.")
-	if err := cmdFlags.Parse(args); err != nil {
+	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
+	if err := c.FS.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
 		return 1
 	}
 

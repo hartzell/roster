@@ -6,19 +6,23 @@ import (
 	"os"
 
 	"text/template"
-
-	"github.com/mitchellh/cli"
 )
 
 //
 // Implement the "hosts" command
 
 type HostsCommand struct {
-	Ui cli.Ui
+	DefaultCommand
 }
 
-func (c *HostsCommand) Run(_ []string) int {
-	state, err := fetchState(".")
+func (c *HostsCommand) Run(args []string) int {
+	c.InitFlagSet()
+	if err := c.FS.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		return 1
+	}
+
+	state, err := fetchState(c.Dir)
 	if err != nil {
 		return 1
 	}

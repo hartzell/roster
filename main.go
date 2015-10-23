@@ -3,6 +3,7 @@ package main
 //go:generate esc -o templates.go templates
 
 import (
+	"flag"
 	"os"
 
 	"github.com/mitchellh/cli"
@@ -26,6 +27,21 @@ func main() {
 	os.Exit(exitStatus)
 }
 
+type DefaultCommand struct {
+	Dir string
+	Ui  cli.Ui
+	FS  *flag.FlagSet
+}
+
+func (dc *DefaultCommand) Help() string {
+	return "shite"
+}
+
+func (dc *DefaultCommand) InitFlagSet() {
+	dc.FS = flag.NewFlagSet("inventory", flag.ContinueOnError)
+	dc.FS.StringVar(&dc.Dir, "dir", ".", "The path to the terraform directory")
+}
+
 func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 
 	c := cli.NewCLI("roster", "0.0.1")
@@ -34,29 +50,32 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 	c.Commands = map[string]cli.CommandFactory{
 		"inventory": func() (cli.Command, error) {
 			return &InventoryCommand{
-				Ui: ui,
+				DefaultCommand: DefaultCommand{Ui: ui},
 			}, nil
 		},
 		// default command is "inventory", with some hacks for usage/synopsis
 		"": func() (cli.Command, error) {
 			return &DefaultInventoryCommand{
-				Ui:  ui,
+				InventoryCommand: InventoryCommand{
+					DefaultCommand: DefaultCommand{Ui: ui},
+				},
+				//				DefaultCommand: DefaultCommand{Ui: ui},
 				cli: *c,
 			}, nil
 		},
 		"hosts": func() (cli.Command, error) {
 			return &HostsCommand{
-				Ui: ui,
+				DefaultCommand: DefaultCommand{Ui: ui},
 			}, nil
 		},
 		"dump-template": func() (cli.Command, error) {
 			return &DumpTemplateCommand{
-				Ui: ui,
+				DefaultCommand: DefaultCommand{Ui: ui},
 			}, nil
 		},
 		"execute-template": func() (cli.Command, error) {
 			return &ExecuteTemplateCommand{
-				Ui: ui,
+				DefaultCommand: DefaultCommand{Ui: ui},
 			}, nil
 		},
 	}

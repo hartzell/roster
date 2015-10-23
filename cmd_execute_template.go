@@ -2,28 +2,24 @@ package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"text/template"
-
-	"github.com/mitchellh/cli"
 )
 
 //
 // Implement the "execute-template" command
 
 type ExecuteTemplateCommand struct {
+	DefaultCommand
 	Template string
-	Ui       cli.Ui
 }
 
 func (c *ExecuteTemplateCommand) Run(args []string) int {
-	cmdFlags := flag.NewFlagSet("dumpTemplate", flag.ContinueOnError)
-	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
-
-	cmdFlags.StringVar(&c.Template, "template", "", "The name of the template to dump.")
-	if err := cmdFlags.Parse(args); err != nil {
+	c.InitFlagSet()
+	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
+	if err := c.FS.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
 		return 1
 	}
 
@@ -32,7 +28,7 @@ func (c *ExecuteTemplateCommand) Run(args []string) int {
 		return 1
 	}
 
-	state, err := fetchState(".")
+	state, err := fetchState(c.Dir)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to fetchState: %s", err))
 		return 1

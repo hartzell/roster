@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 
 	"github.com/mitchellh/cli"
 )
@@ -10,19 +10,11 @@ import (
 // Implement the default command (inventory, except help is different)
 
 type DefaultInventoryCommand struct {
-	List bool
-	Host string
-	Ui   cli.Ui
-	cli  cli.CLI
+	InventoryCommand
+	cli cli.CLI
 }
 
 func (c *DefaultInventoryCommand) Run(args []string) int {
-	ic := InventoryCommand{
-		List: c.List,
-		Host: c.Host,
-		Ui:   c.Ui,
-	}
-
 	// FOWL/FOUL...
 	// mimic the inventory commands arg passing here so that we can do a useful
 	// help message if someone gave a bogus arg to the default command.
@@ -33,14 +25,17 @@ func (c *DefaultInventoryCommand) Run(args []string) int {
 	// that moose is a subcommand instead of an arg to the default command.
 	// https://github.com/mitchellh/cli/blob/master/cli.go#L165-L172
 
-	cmdFlags := flag.NewFlagSet("defaultinventory", flag.ContinueOnError)
-	cmdFlags.Usage = func() { c.Ui.Output(c.Help()) }
-	cmdFlags.BoolVar(&ic.List, "list", false, "Generate a full inventory")
-	cmdFlags.StringVar(&ic.Host, "host", "", "The host for host-specific inventory")
-	if err := cmdFlags.Parse(args); err != nil {
+	c.InitFlagSet()
+	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
+	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
+	if err := c.FS.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
 		return 1
 	}
 
+	ic := InventoryCommand{
+		DefaultCommand: DefaultCommand{Ui: c.Ui},
+	}
 	return ic.Run(args)
 }
 
