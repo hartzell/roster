@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/terraform"
 )
 
@@ -27,7 +26,6 @@ func fetchState(dir string) (*terraform.State, error) {
 
 func openState(dir string) (io.ReadCloser, error) {
 	file := filepath.Join(dir, "terraform.tfstate")
-	spew.Dump(file)
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Unable to open '%s'", file))
