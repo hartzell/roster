@@ -48,7 +48,7 @@ func (dc *DefaultCommand) InitFlagSet() {
 	dc.FS.StringVar(&dc.Dir, "dir", ".", "The path to the terraform directory")
 }
 
-func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
+func doIt(ui cli.Ui, args []string) (int, error) {
 	c := cli.NewCLI("roster", "0.0.1")
 	c.Args = args
 	c.Commands = map[string]cli.CommandFactory{
@@ -62,6 +62,6 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 		"execute-template": ExecuteTemplateCommandFactory(ui),
 	}
 
-	exitStatus, err = c.Run()
-	return
+	exitStatus, err := c.Run()
+	return exitStatus, err
 }
