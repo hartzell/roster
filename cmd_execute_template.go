@@ -17,7 +17,7 @@ type ExecuteTemplateCommand struct {
 	Template string
 }
 
-func ExecTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+func ExecuteTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
 		return &InventoryCommand{
 			DefaultCommand: DefaultCommand{Ui: ui},

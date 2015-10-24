@@ -59,7 +59,7 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 		"inventory":        InventoryCommandFactory(ui),
 		"hosts":            HostCommandFactory(ui),
 		"dump-template":    DumpTemplateCommandFactory(ui),
-		"execute-template": ExecTemplateCommandFactory(ui),
+		"execute-template": ExecuteTemplateCommandFactory(ui),
 	}
 
 	exitStatus, err = c.Run()
