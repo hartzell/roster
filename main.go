@@ -65,10 +65,3 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 	exitStatus, err = c.Run()
 	return
 }
-
-type instanceInfo struct {
-	Name     string
-	Address  string
-	Groups   []string
-	HostVars map[string]string
-}

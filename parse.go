@@ -9,6 +9,13 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+type instanceInfo struct {
+	Name     string
+	Address  string
+	Groups   []string
+	HostVars map[string]string
+}
+
 func parseState(state terraform.State) ([]*instanceInfo, error) {
 
 	instances := []*instanceInfo{}
