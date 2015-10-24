@@ -16,11 +16,6 @@ type InventoryCommand struct {
 	Host string
 }
 
-//func (c *InventoryCommand) NewFlagSet() *flag.FlagSet {
-//	fs := c.DefaultFlagSet()
-//	return fs
-//}
-
 func (c *InventoryCommand) Run(args []string) int {
 	c.InitFlagSet()
 
