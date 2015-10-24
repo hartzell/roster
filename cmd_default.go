@@ -6,13 +6,13 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-type DefaultCommand struct {
+type CmdDefault struct {
 	Dir string
 	Ui  cli.Ui
 	FS  *flag.FlagSet
 }
 
-func (dc *DefaultCommand) Help() string {
+func (dc *CmdDefault) Help() string {
 	// stub this out.  It never seems to get called, so that fact that
 	// it's shared amongst all of the Commands isn't a problem.  I'm not
 	// sure *why* I'm getting lucky and need to walk through it, but for
@@ -20,9 +20,9 @@ func (dc *DefaultCommand) Help() string {
 	return ""
 }
 
-// InitFlagSet intializes the DefaultCommand's FS element and adds
+// InitFlagSet intializes the CmdDefault's FS element and adds
 // default flags.
-func (dc *DefaultCommand) InitFlagSet() {
+func (dc *CmdDefault) InitFlagSet() {
 	dc.FS = flag.NewFlagSet("inventory", flag.ContinueOnError)
 	dc.FS.StringVar(&dc.Dir, "dir", ".", "The path to the terraform directory")
 }

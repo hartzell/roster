@@ -9,24 +9,24 @@ import (
 //
 // Implement the default command (inventory, except help is different)
 
-type DefaultInventoryCommand struct {
-	InventoryCommand
+type CmdDefaultInventory struct {
+	CmdInventory
 	cli cli.CLI
 }
 
-func DefaultInventoryCommandFactory(ui cli.Ui, c *cli.CLI) func() (cli.Command, error) {
+func CmdDefaultInventoryFactory(ui cli.Ui, c *cli.CLI) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &DefaultInventoryCommand{
-			InventoryCommand: InventoryCommand{
-				DefaultCommand: DefaultCommand{Ui: ui},
+		return &CmdDefaultInventory{
+			CmdInventory: CmdInventory{
+				CmdDefault: CmdDefault{Ui: ui},
 			},
-			//				DefaultCommand: DefaultCommand{Ui: ui},
+			//				CmdDefault: CmdDefault{Ui: ui},
 			cli: *c,
 		}, nil
 	}
 }
 
-func (c *DefaultInventoryCommand) Run(args []string) int {
+func (c *CmdDefaultInventory) Run(args []string) int {
 	// FOWL/FOUL...
 	// mimic the inventory commands arg passing here so that we can do a useful
 	// help message if someone gave a bogus arg to the default command.
@@ -45,16 +45,16 @@ func (c *DefaultInventoryCommand) Run(args []string) int {
 		return 1
 	}
 
-	ic := InventoryCommand{
-		DefaultCommand: DefaultCommand{Ui: c.Ui},
+	ic := CmdInventory{
+		CmdDefault: CmdDefault{Ui: c.Ui},
 	}
 	return ic.Run(args)
 }
 
-func (c *DefaultInventoryCommand) Help() string {
+func (c *CmdDefaultInventory) Help() string {
 	return c.cli.HelpFunc(c.cli.Commands) + "\n"
 }
 
-func (c *DefaultInventoryCommand) Synopsis() string {
+func (c *CmdDefaultInventory) Synopsis() string {
 	return "(default command is 'inventory')"
 }

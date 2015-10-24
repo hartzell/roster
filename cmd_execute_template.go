@@ -12,20 +12,20 @@ import (
 //
 // Implement the "execute-template" command
 
-type ExecuteTemplateCommand struct {
-	DefaultCommand
+type CmdExecuteTemplate struct {
+	CmdDefault
 	Template string
 }
 
-func ExecuteTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+func CmdExecuteTemplateFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &InventoryCommand{
-			DefaultCommand: DefaultCommand{Ui: ui},
+		return &CmdInventory{
+			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
 }
 
-func (c *ExecuteTemplateCommand) Run(args []string) int {
+func (c *CmdExecuteTemplate) Run(args []string) int {
 	c.InitFlagSet()
 	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
 	if err := c.FS.Parse(args); err != nil {
@@ -80,10 +80,10 @@ func (c *ExecuteTemplateCommand) Run(args []string) int {
 	return 0
 }
 
-func (c *ExecuteTemplateCommand) Help() string {
+func (c *CmdExecuteTemplate) Help() string {
 	return "Execute a user supplied template."
 }
 
-func (c *ExecuteTemplateCommand) Synopsis() string {
+func (c *CmdExecuteTemplate) Synopsis() string {
 	return "Execute a user supplied template."
 }

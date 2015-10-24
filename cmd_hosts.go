@@ -13,13 +13,13 @@ import (
 // Implement the "hosts" command
 
 type HostsCommand struct {
-	DefaultCommand
+	CmdDefault
 }
 
-func HostCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+func CmdHostFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &InventoryCommand{
-			DefaultCommand: DefaultCommand{Ui: ui},
+		return &CmdInventory{
+			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
 }

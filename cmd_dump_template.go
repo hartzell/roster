@@ -9,20 +9,20 @@ import (
 //
 // Implement the "dump-template" command
 
-type DumpTemplateCommand struct {
-	DefaultCommand
+type CmdDumpTemplate struct {
+	CmdDefault
 	Template string
 }
 
-func DumpTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+func CmdDumpTemplateFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &InventoryCommand{
-			DefaultCommand: DefaultCommand{Ui: ui},
+		return &CmdInventory{
+			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
 }
 
-func (c *DumpTemplateCommand) Run(args []string) int {
+func (c *CmdDumpTemplate) Run(args []string) int {
 	c.InitFlagSet()
 	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
 	if err := c.FS.Parse(args); err != nil {
@@ -44,10 +44,10 @@ func (c *DumpTemplateCommand) Run(args []string) int {
 	return 0
 }
 
-func (c *DumpTemplateCommand) Help() string {
+func (c *CmdDumpTemplate) Help() string {
 	return "(h) Dump one of roster's built in templates."
 }
 
-func (c *DumpTemplateCommand) Synopsis() string {
+func (c *CmdDumpTemplate) Synopsis() string {
 	return "Dump one of roster's built in templates."
 }

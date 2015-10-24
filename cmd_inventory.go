@@ -11,21 +11,21 @@ import (
 
 // Implement the "inventory" command
 
-type InventoryCommand struct {
-	DefaultCommand
+type CmdInventory struct {
+	CmdDefault
 	List bool
 	Host string
 }
 
-func InventoryCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+func CmdInventoryFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &InventoryCommand{
-			DefaultCommand: DefaultCommand{Ui: ui},
+		return &CmdInventory{
+			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
 }
 
-func (c *InventoryCommand) Run(args []string) int {
+func (c *CmdInventory) Run(args []string) int {
 	c.InitFlagSet()
 	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
 	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
@@ -40,7 +40,7 @@ func (c *InventoryCommand) Run(args []string) int {
 	}
 
 	if c.Host != "" {
-		err := c.doHostInventory(c.Host)
+		err := c.doCmdHost(c.Host)
 		if err != nil {
 			c.Ui.Error(err.Error())
 			return 1
@@ -57,12 +57,12 @@ func (c *InventoryCommand) Run(args []string) int {
 	return 0
 }
 
-func (c *InventoryCommand) doHostInventory(host string) error {
+func (c *CmdInventory) doCmdHost(host string) error {
 	c.Ui.Output("{}")
 	return nil
 }
 
-func (c *InventoryCommand) doFullInventory() error {
+func (c *CmdInventory) doFullInventory() error {
 	state, err := fetchState(c.Dir)
 	if err != nil {
 		return fmt.Errorf("Unable to fetchState: %s", err)
@@ -98,6 +98,6 @@ func (c *InventoryCommand) doFullInventory() error {
 	return nil
 }
 
-func (c *InventoryCommand) Synopsis() string {
+func (c *CmdInventory) Synopsis() string {
 	return "(s) Generate an Ansible dynamic inventory"
 }

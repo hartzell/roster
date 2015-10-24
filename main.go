@@ -37,11 +37,11 @@ func doIt(ui cli.Ui, args []string) (int, error) {
 		// default command is "inventory", with some hacks for
 		// usage/synopsis, so its Factory takes diff arg than other
 		// factory...
-		"":                 DefaultInventoryCommandFactory(ui, c),
-		"inventory":        InventoryCommandFactory(ui),
-		"hosts":            HostCommandFactory(ui),
-		"dump-template":    DumpTemplateCommandFactory(ui),
-		"execute-template": ExecuteTemplateCommandFactory(ui),
+		"":                 CmdDefaultInventoryFactory(ui, c),
+		"inventory":        CmdInventoryFactory(ui),
+		"hosts":            CmdHostFactory(ui),
+		"dump-template":    CmdDumpTemplateFactory(ui),
+		"execute-template": CmdExecuteTemplateFactory(ui),
 	}
 
 	exitStatus, err := c.Run()
