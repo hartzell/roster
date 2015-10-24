@@ -44,8 +44,9 @@ func (c *InventoryCommand) Run(args []string) int {
 		err := c.doHostInventory(c.Host)
 		if err != nil {
 			c.Ui.Error(err.Error())
+			return 1
 		}
-		return 1
+		return 0
 	}
 
 	err := c.doFullInventory()
