@@ -34,7 +34,11 @@ type DefaultCommand struct {
 }
 
 func (dc *DefaultCommand) Help() string {
-	return "shite"
+	// stub this out.  It never seems to get called, so that fact that
+	// it's shared amongst all of the Commands isn't a problem.  I'm not
+	// sure *why* I'm getting lucky and need to walk through it, but for
+	// now, just take it.
+	return ""
 }
 
 func (dc *DefaultCommand) InitFlagSet() {
