@@ -4,10 +4,9 @@ type Group struct {
 	Name  string
 	Hosts []string
 }
-type Groups map[string]*Group
 
-func groups(instances []*instanceInfo, groupJustForHost bool) []*Group {
-	groups := Groups{}
+func Groups(instances []*InstanceInfo, groupJustForHost bool) []*Group {
+	groups := map[string]*Group{}
 	for _, i := range instances {
 		if groupJustForHost {
 			// add a group for each individual
@@ -43,7 +42,7 @@ type HostVar struct {
 	Vars []variable
 }
 
-func hostvars(instances []*instanceInfo) []*HostVar {
+func HostVars(instances []*InstanceInfo) []*HostVar {
 	theVars := []*HostVar{}
 
 	for _, i := range instances {

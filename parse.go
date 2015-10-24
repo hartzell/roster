@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// Type instanceInfo captures the info we want for each instance,
+// Type InstanceInfo captures the info we want for each instance,
 // name, address, a slice of groups and a map of host variables.
-type instanceInfo struct {
+type InstanceInfo struct {
 	Name     string
 	Address  string
 	Groups   []string
@@ -20,17 +20,17 @@ type instanceInfo struct {
 }
 
 // Func parseState loops over the resources in a terraform.State
-// instance and returns a slice of instanceInfo and an error.  If
-// there is an error, the slice of instanceInfo will be empty.
-func parseState(state terraform.State) ([]*instanceInfo, error) {
-	instances := []*instanceInfo{}
+// instance and returns a slice of InstanceInfo and an error.  If
+// there is an error, the slice of InstanceInfo will be empty.
+func parseState(state terraform.State) ([]*InstanceInfo, error) {
+	instances := []*InstanceInfo{}
 	for _, m := range state.Modules {
 		for _, rs := range m.Resources {
 			switch rs.Type {
 			case "openstack_compute_instance_v2":
 				info, err := parse_os_compute_instance_v2(rs)
 				if err != nil {
-					return []*instanceInfo{},
+					return []*InstanceInfo{},
 						errors.New("Unable to parse openstack compute instance")
 				}
 				instances = append(instances, info)
@@ -48,8 +48,8 @@ func parseState(state terraform.State) ([]*instanceInfo, error) {
 //
 // Thanks to @apparentlymart for this bit of code.
 // See: https://github.com/hashicorp/terraform/issues/3405
-func parse_os_compute_instance_v2(rs *terraform.ResourceState) (*instanceInfo, error) {
-	info := instanceInfo{}
+func parse_os_compute_instance_v2(rs *terraform.ResourceState) (*InstanceInfo, error) {
+	info := InstanceInfo{}
 
 	provider := openstack.Provider().(*schema.Provider)
 	instanceSchema := provider.ResourcesMap["openstack_compute_instance_v2"].Schema

@@ -74,8 +74,8 @@ func (c *CmdInventory) doFullInventory() error {
 	}
 
 	funcMap := template.FuncMap{
-		"groups":   groups,
-		"hostvars": hostvars,
+		"groups":   Groups,
+		"hostvars": HostVars,
 	}
 
 	tString, err := FSString(isDev, "/templates/dynamicInventoryTemplate")

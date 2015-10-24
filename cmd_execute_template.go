@@ -51,8 +51,8 @@ func (c *CmdExecuteTemplate) Run(args []string) int {
 	}
 
 	funcMap := template.FuncMap{
-		"groups":   groups,
-		"hostvars": hostvars,
+		"groups":   Groups,
+		"hostvars": HostVars,
 	}
 
 	tBytes, err := ioutil.ReadFile(c.Template)

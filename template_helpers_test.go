@@ -17,7 +17,7 @@ func (n ByName) Less(i, j int) bool { return n[i].Name < n[j].Name }
 // TestGroups checks that the correct []*Group is returned for a
 // substantive input.
 func TestGroups(t *testing.T) {
-	input := []*instanceInfo{
+	input := []*InstanceInfo{
 		{Name: "i_a", Address: "192.168.1.1", Groups: []string{"g1", "g2"}},
 		{Name: "i_b", Address: "192.168.1.2", Groups: []string{"g1", "g3"}},
 	}
@@ -27,7 +27,7 @@ func TestGroups(t *testing.T) {
 		&Group{Name: "g3", Hosts: []string{"192.168.1.2"}},
 	}
 
-	got := groups(input, false)
+	got := Groups(input, false)
 	sort.Sort(ByName(got))
 	if !reflect.DeepEqual(got, expect) {
 		t.Fail()
@@ -42,7 +42,7 @@ func TestGroups(t *testing.T) {
 		&Group{Name: "i_b", Hosts: []string{"192.168.1.2"}},
 	}
 
-	got = groups(input, true)
+	got = Groups(input, true)
 	sort.Sort(ByName(got))
 	if !reflect.DeepEqual(got, expect_more) {
 		t.Fail()
@@ -52,11 +52,11 @@ func TestGroups(t *testing.T) {
 // TestTmptyInput checks that calling groups with
 // []*InstanceInfo{} returns an empty slice of results.
 func TestEmptyInput(t *testing.T) {
-	got := groups([]*instanceInfo{}, true)
+	got := Groups([]*InstanceInfo{}, true)
 	if len(got) != 0 {
 		t.Fail()
 	}
-	got = groups([]*instanceInfo{}, false)
+	got = Groups([]*InstanceInfo{}, false)
 	if len(got) != 0 {
 		t.Fail()
 	}
