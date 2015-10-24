@@ -49,9 +49,7 @@ func (dc *DefaultCommand) InitFlagSet() {
 }
 
 func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
-
 	c := cli.NewCLI("roster", "0.0.1")
-
 	c.Args = args
 	c.Commands = map[string]cli.CommandFactory{
 		// default command is "inventory", with some hacks for
