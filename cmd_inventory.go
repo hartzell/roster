@@ -18,7 +18,6 @@ type InventoryCommand struct {
 
 func (c *InventoryCommand) Run(args []string) int {
 	c.InitFlagSet()
-
 	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
 	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
 	if err := c.FS.Parse(args); err != nil {

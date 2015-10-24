@@ -15,7 +15,6 @@ type DumpTemplateCommand struct {
 
 func (c *DumpTemplateCommand) Run(args []string) int {
 	c.InitFlagSet()
-
 	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
 	if err := c.FS.Parse(args); err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
