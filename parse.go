@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 
 	"github.com/hashicorp/terraform/builtin/providers/openstack"
@@ -9,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// Type instanceInfo captures the info we want for each instance,
+// name, address, a slice of groups and a map of host variables.
 type instanceInfo struct {
 	Name     string
 	Address  string
@@ -16,8 +19,10 @@ type instanceInfo struct {
 	HostVars map[string]string
 }
 
+// Func parseState loops over the resources in a terraform.State
+// instance and returns a slice of instanceInfo and an error.  If
+// there is an error, the slice of instanceInfo will be empty.
 func parseState(state terraform.State) ([]*instanceInfo, error) {
-
 	instances := []*instanceInfo{}
 	for _, m := range state.Modules {
 		for _, rs := range m.Resources {
@@ -25,7 +30,8 @@ func parseState(state terraform.State) ([]*instanceInfo, error) {
 			case "openstack_compute_instance_v2":
 				info, err := parse_os_compute_instance_v2(rs)
 				if err != nil {
-					return []*instanceInfo{}, errors.New("Unable to parse" + "SHITE")
+					return []*instanceInfo{},
+						errors.New("Unable to parse openstack compute instance")
 				}
 				instances = append(instances, info)
 			}
@@ -34,12 +40,14 @@ func parseState(state terraform.State) ([]*instanceInfo, error) {
 	return instances, nil
 }
 
+// Function parse_os_compute_instance_v2 uses terraform routines to
+// parse info out of a terraform.ResourceState.
 //
-// Thanks to @apparentlymart for this bit of code that pulls
-// values out of the state file info.  It's a bit underhanded
-// and behind terraform's public interface, but until there's
-// a better way....  See:
-// https://github.com/hashicorp/terraform/issues/3405
+// HEADS UP: it's use of these routines is slightly underhanded (but
+// better than reverse engineering the state file format...).
+//
+// Thanks to @apparentlymart for this bit of code.
+// See: https://github.com/hashicorp/terraform/issues/3405
 func parse_os_compute_instance_v2(rs *terraform.ResourceState) (*instanceInfo, error) {
 	info := instanceInfo{}
 
@@ -60,47 +68,45 @@ func parse_os_compute_instance_v2(rs *terraform.ResourceState) (*instanceInfo, e
 			groups := splitOnComma(value.(string))
 			info.Groups = append(info.Groups, groups...)
 		} else if key == "ansible_hostvars" {
-			info.HostVars = parseVars(value.(string))
+			info.HostVars, err = parseVars(value.(string))
+			if err != nil {
+				return nil, fmt.Errorf("Unable to parse host variables: %s", err)
+			}
 		}
 	}
 
 	nameResult, err := stateReader.ReadField([]string{"name"})
 	if err != nil {
-		return nil, errors.New("dammit #2")
+		return nil, fmt.Errorf("Unable to read name field: %s", err)
 	}
 	info.Name = nameResult.ValueOrZero(instanceSchema["name"]).(string)
 
 	accessResult, err := stateReader.ReadField([]string{"access_ip_v4"})
 	if err != nil {
-		return nil, errors.New("dammit #3")
+		return nil, fmt.Errorf("Unable to read access_ip_v4 field: %s", err)
 	}
 	info.Address = accessResult.ValueOrZero(instanceSchema["access_ip_v4"]).(string)
 
 	return &info, nil
 }
 
-// TODO: Don't Panic(tm).
-
-// Convert a string like "var1 = val1, var2=val2" into a
-// map[string]string{"var1": "val1", "var2": "val2}
-func parseVars(s string) map[string]string {
+// Function parseVars converts a string like "var1 = val1, var2=val2"
+// into a map[string]string{"var1": "val1", "var2": "val2}
+func parseVars(s string) (map[string]string, error) {
 	vars := make(map[string]string)
 
 	if len(s) > 0 {
 		name_val_pairs := splitOnComma(s)
 		for _, nvp := range name_val_pairs { // each name value pair (nvp)
-			err, name, value := splitOnEqual(nvp)
+			v, err := splitOnEqual(nvp)
 			if err != nil {
-				panic(err)
+				return nil, fmt.Errorf("Unable to parseVars: %s", err)
 			}
-			vars[name] = value
+			vars[v[0]] = v[1]
 		}
 	}
-
-	return vars
+	return vars, nil
 }
-
-// TODO: these should be consistent.
 
 // Convert a string like "a, b, something" into
 // []string{"a", "b", "something"}.
@@ -109,13 +115,14 @@ func splitOnComma(s string) []string {
 	return comma_sep.Split(s, -1)
 }
 
-// Convert a string like "a=bb, something" into
-// []string{"a", "b", "something"}.
-func splitOnEqual(s string) (error, string, string) {
+// Convert a string like "a=bb" into []string{"a", "b"}.
+func splitOnEqual(s string) ([]string, error) {
 	equal_sep := regexp.MustCompile("\\s*=\\s*")
 	parts := equal_sep.Split(s, -1)
 	if len(parts) != 2 {
-		return errors.New("Multiple equal signs seen in a single assignment statement"), "", ""
+		return nil,
+			fmt.Errorf(
+				"Unable to split \"%s\" on an equal sign and get sensible result", s)
 	}
-	return nil, parts[0], parts[1]
+	return parts, nil
 }
