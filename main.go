@@ -9,11 +9,11 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-var IsDev bool
+var isDev bool
 
 func main() {
 
-	IsDev = os.Getenv("ROSTER_DEV") == "1"
+	isDev = os.Getenv("ROSTER_DEV") == "1"
 
 	ui := &cli.BasicUi{
 		Reader:      os.Stdin,

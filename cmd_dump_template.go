@@ -35,7 +35,7 @@ func (c *DumpTemplateCommand) Run(args []string) int {
 		return 1
 	}
 
-	tString, err := FSString(IsDev, c.Template)
+	tString, err := FSString(isDev, c.Template)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to read template: %s", err))
 	}

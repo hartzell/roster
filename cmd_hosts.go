@@ -42,7 +42,7 @@ func (c *HostsCommand) Run(args []string) int {
 		return 1
 	}
 
-	tString, err := FSString(IsDev, "/templates/etcHostsTemplate")
+	tString, err := FSString(isDev, "/templates/etcHostsTemplate")
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to read etcHostsTemplate: %s", err))
 		return 1

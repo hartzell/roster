@@ -78,7 +78,7 @@ func (c *InventoryCommand) doFullInventory() error {
 		"hostvars": hostvars,
 	}
 
-	tString, err := FSString(IsDev, "/templates/dynamicInventoryTemplate")
+	tString, err := FSString(isDev, "/templates/dynamicInventoryTemplate")
 	if err != nil {
 		return fmt.Errorf("Unable to read dynamicInventoryTemplate: %s", err)
 	}
