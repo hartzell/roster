@@ -5,6 +5,17 @@ type Group struct {
 	Hosts []string
 }
 
+// BUG(hartzell): figure out a better way to handle "singleton groups"
+
+// The function Groups is intended to be used as a helper in
+// templates.  It takes a slice of InstanceInfo and a boolean (see
+// below) and returns a slice of group info over which a template can
+// easily range.
+
+// The boolean is stupid, the goal is to determine whether Groups
+// should include a unique group for each host by itself, in addition
+// to any groups mentioned in instance metadata.  There has to be a
+// better way...
 func Groups(instances []*InstanceInfo, groupJustForHost bool) []*Group {
 	groups := map[string]*Group{}
 	for _, i := range instances {
@@ -42,6 +53,9 @@ type HostVar struct {
 	Vars []variable
 }
 
+// The function HostVars is intended to be used as a helper in
+// templates.  It takes a slice of InstanceInfo and returns a slice of
+// HostVar over which the template can easily range.
 func HostVars(instances []*InstanceInfo) []*HostVar {
 	theVars := []*HostVar{}
 
