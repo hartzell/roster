@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/mitchellh/cli"
 )
@@ -36,8 +35,7 @@ func (c *DumpTemplateCommand) Run(args []string) int {
 		return 1
 	}
 
-	useLocal := os.Getenv("ROSTER_DEV") == "1"
-	tString, err := FSString(useLocal, c.Template)
+	tString, err := FSString(IsDev, c.Template)
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to read template: %s", err))
 	}

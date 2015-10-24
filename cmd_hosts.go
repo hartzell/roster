@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"os"
 
 	"github.com/mitchellh/cli"
 
@@ -43,8 +42,7 @@ func (c *HostsCommand) Run(args []string) int {
 		return 1
 	}
 
-	useLocal := os.Getenv("ROSTER_DEV") == "1"
-	tString, err := FSString(useLocal, "/templates/etcHostsTemplate")
+	tString, err := FSString(IsDev, "/templates/etcHostsTemplate")
 	if err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to read etcHostsTemplate: %s", err))
 		return 1
