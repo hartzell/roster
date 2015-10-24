@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"text/template"
+
+	"github.com/mitchellh/cli"
 )
 
 // Implement the "inventory" command
@@ -14,6 +16,14 @@ type InventoryCommand struct {
 	DefaultCommand
 	List bool
 	Host string
+}
+
+func InventoryCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+	return func() (cli.Command, error) {
+		return &InventoryCommand{
+			DefaultCommand: DefaultCommand{Ui: ui},
+		}, nil
+	}
 }
 
 func (c *InventoryCommand) Run(args []string) int {

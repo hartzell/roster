@@ -41,6 +41,8 @@ func (dc *DefaultCommand) Help() string {
 	return ""
 }
 
+// InitFlagSet intializes the DefaultCommand's FS element and adds
+// default flags.
 func (dc *DefaultCommand) InitFlagSet() {
 	dc.FS = flag.NewFlagSet("inventory", flag.ContinueOnError)
 	dc.FS.StringVar(&dc.Dir, "dir", ".", "The path to the terraform directory")
@@ -52,36 +54,14 @@ func doIt(ui cli.Ui, args []string) (exitStatus int, err error) {
 
 	c.Args = args
 	c.Commands = map[string]cli.CommandFactory{
-		"inventory": func() (cli.Command, error) {
-			return &InventoryCommand{
-				DefaultCommand: DefaultCommand{Ui: ui},
-			}, nil
-		},
-		// default command is "inventory", with some hacks for usage/synopsis
-		"": func() (cli.Command, error) {
-			return &DefaultInventoryCommand{
-				InventoryCommand: InventoryCommand{
-					DefaultCommand: DefaultCommand{Ui: ui},
-				},
-				//				DefaultCommand: DefaultCommand{Ui: ui},
-				cli: *c,
-			}, nil
-		},
-		"hosts": func() (cli.Command, error) {
-			return &HostsCommand{
-				DefaultCommand: DefaultCommand{Ui: ui},
-			}, nil
-		},
-		"dump-template": func() (cli.Command, error) {
-			return &DumpTemplateCommand{
-				DefaultCommand: DefaultCommand{Ui: ui},
-			}, nil
-		},
-		"execute-template": func() (cli.Command, error) {
-			return &ExecuteTemplateCommand{
-				DefaultCommand: DefaultCommand{Ui: ui},
-			}, nil
-		},
+		// default command is "inventory", with some hacks for
+		// usage/synopsis, so its Factory takes diff arg than other
+		// factory...
+		"":                 DefaultInventoryCommandFactory(ui, c),
+		"inventory":        InventoryCommandFactory(ui),
+		"hosts":            HostCommandFactory(ui),
+		"dump-template":    DumpTemplateCommandFactory(ui),
+		"execute-template": ExecTemplateCommandFactory(ui),
 	}
 
 	exitStatus, err = c.Run()

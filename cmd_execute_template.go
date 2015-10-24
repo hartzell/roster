@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"text/template"
+
+	"github.com/mitchellh/cli"
 )
 
 //
@@ -13,6 +15,14 @@ import (
 type ExecuteTemplateCommand struct {
 	DefaultCommand
 	Template string
+}
+
+func ExecTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+	return func() (cli.Command, error) {
+		return &InventoryCommand{
+			DefaultCommand: DefaultCommand{Ui: ui},
+		}, nil
+	}
 }
 
 func (c *ExecuteTemplateCommand) Run(args []string) int {

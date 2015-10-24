@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/mitchellh/cli"
 )
 
 //
@@ -11,6 +13,14 @@ import (
 type DumpTemplateCommand struct {
 	DefaultCommand
 	Template string
+}
+
+func DumpTemplateCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+	return func() (cli.Command, error) {
+		return &InventoryCommand{
+			DefaultCommand: DefaultCommand{Ui: ui},
+		}, nil
+	}
 }
 
 func (c *DumpTemplateCommand) Run(args []string) int {

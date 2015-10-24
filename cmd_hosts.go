@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/mitchellh/cli"
+
 	"text/template"
 )
 
@@ -13,6 +15,14 @@ import (
 
 type HostsCommand struct {
 	DefaultCommand
+}
+
+func HostCommandFactory(ui cli.Ui) func() (cli.Command, error) {
+	return func() (cli.Command, error) {
+		return &InventoryCommand{
+			DefaultCommand: DefaultCommand{Ui: ui},
+		}, nil
+	}
 }
 
 func (c *HostsCommand) Run(args []string) int {

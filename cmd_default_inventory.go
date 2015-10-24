@@ -14,6 +14,18 @@ type DefaultInventoryCommand struct {
 	cli cli.CLI
 }
 
+func DefaultInventoryCommandFactory(ui cli.Ui, c *cli.CLI) func() (cli.Command, error) {
+	return func() (cli.Command, error) {
+		return &DefaultInventoryCommand{
+			InventoryCommand: InventoryCommand{
+				DefaultCommand: DefaultCommand{Ui: ui},
+			},
+			//				DefaultCommand: DefaultCommand{Ui: ui},
+			cli: *c,
+		}, nil
+	}
+}
+
 func (c *DefaultInventoryCommand) Run(args []string) int {
 	// FOWL/FOUL...
 	// mimic the inventory commands arg passing here so that we can do a useful
