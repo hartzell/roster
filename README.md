@@ -26,35 +26,35 @@ technique](http://stackoverflow.com/questions/21305865/golang-separating-items-w
 
 Roster parses state data for instances from:
 
-    OpenStack
-    - the instance name is used as the Name
-    - the access_ip_v4 is used as the Address
-    - host_vars and groups can be specified in the metadata like so:
+OpenStack
+- the instance name is used as the Name
+- the access_ip_v4 is used as the Address
+- host_vars and groups can be specified in the metadata like so:
 
-        metadata {
-            ansible_host_groups = "foo,  bar"
-       			ansible_host_vars = "color=red, importance=high"
-        }
+    metadata {
+        ansible_host_groups = "foo,  bar"
+   			ansible_host_vars = "color=red, importance=high"
+    }
 
-    parsing those strings is very unsophisticated, I'm waiting for better
-    use cases before I get fancy.
+parsing those strings is very unsophisticated, I'm waiting for better
+use cases before I get fancy.
 
-    DigitalOcean
-    - the name is used as the Name
-    - the ipv4address is used as the Address
-    - there is no support for groups or hostvars
+DigitalOcean
+- the name is used as the Name
+- the ipv4address is used as the Address
+- there is no support for groups or hostvars
 
-    Cloudstack
-    - the name is used as the Name
-    - the ipaddress is used as the address
-    - there is no support for groups or hostvars
+Cloudstack
+- the name is used as the Name
+- the ipaddress is used as the address
+- there is no support for groups or hostvars
 
-    AWS
-    - I have preliminary support for AWS instances, BUT
-    - Every instance is named "moose", I can't figure out what info to use
-      as the Name.
-    - If an instance has a public_ip, that is used as the Address, if not
-      and it has a private_ip then that is used.
+AWS
+- I have preliminary support for AWS instances, BUT
+- Every instance is named "moose", I can't figure out what info to use
+  as the Name.
+- If an instance has a public_ip, that is used as the Address, if not
+  and it has a private_ip then that is used.
 
 Usage:
 
