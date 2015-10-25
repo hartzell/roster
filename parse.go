@@ -29,33 +29,24 @@ func parseState(state terraform.State) ([]*InstanceInfo, error) {
 	instances := []*InstanceInfo{}
 	for _, m := range state.Modules {
 		for _, rs := range m.Resources {
+			var the_parser func(*terraform.ResourceState) (*InstanceInfo, error)
+
 			switch rs.Type {
 			case "openstack_compute_instance_v2":
-				info, err := parse_os_compute_instance_v2(rs)
-				if err != nil {
-					return []*InstanceInfo{},
-						errors.New("Unable to parse openstack compute instance")
-				}
-				instances = append(instances, info)
+				the_parser = parse_os_compute_instance_v2
 			case "digitalocean_droplet":
-				info, err := parse_digitalocean_droplet(rs)
-				if err != nil {
-					return []*InstanceInfo{},
-						errors.New("Unable to parse digitalocean_droplet resource")
-				}
-				instances = append(instances, info)
+				the_parser = parse_digitalocean_droplet
 			case "aws_instance":
-				info, err := parse_aws_instance(rs)
-				if err != nil {
-					return []*InstanceInfo{},
-						errors.New("Unable to parse aws_instance resource")
-				}
-				instances = append(instances, info)
+				the_parser = parse_aws_instance
 			case "cloudstack_instance":
-				info, err := parse_cloudstack_instance(rs)
+				the_parser = parse_cloudstack_instance
+			}
+
+			if the_parser != nil {
+				info, err := the_parser(rs)
 				if err != nil {
 					return []*InstanceInfo{},
-						errors.New("Unable to parse aws_instance resource")
+						fmt.Errorf("Unable to parse %s resource", rs.Type)
 				}
 				instances = append(instances, info)
 			}
