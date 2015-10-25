@@ -12,7 +12,7 @@ import (
 
 func TestOpenStack(t *testing.T) {
 	cwd, err := os.Getwd()
-	err = os.Chdir("misc/sample_states/openstack")
+	err = os.Chdir("misc/fixtures/openstack")
 	defer os.Chdir(cwd)
 
 	ui := new(cli.MockUi)
@@ -38,7 +38,7 @@ func TestOpenStack(t *testing.T) {
 
 func TestOpenStackWithDir(t *testing.T) {
 	ui := new(cli.MockUi)
-	exitStatus, err := doIt(ui, []string{"-dir", "misc/sample_states/openstack"})
+	exitStatus, err := doIt(ui, []string{"-dir", "misc/fixtures/openstack"})
 
 	if exitStatus != 0 {
 		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
@@ -99,7 +99,7 @@ func os_expected_list_inventory() *inventory.Inventory {
 
 func TestDigitalOcean(t *testing.T) {
 	cwd, err := os.Getwd()
-	err = os.Chdir("misc/sample_states/digitalocean")
+	err = os.Chdir("misc/fixtures/digitalocean")
 	defer os.Chdir(cwd)
 
 	ui := new(cli.MockUi)
