@@ -25,7 +25,8 @@ func CmdDumpTemplateFactory(ui cli.Ui) func() (cli.Command, error) {
 
 func (c *CmdDumpTemplate) Run(args []string) int {
 	c.InitFlagSet()
-	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
+	c.FS.StringVar(&c.Template, "template", "",
+		"The name of the template to dump: /templates/{dynamicInventoryTemplate,etcHostsTemplate}.")
 	if err := c.FS.Parse(args); err != nil {
 		if err != flag.ErrHelp {
 			c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))

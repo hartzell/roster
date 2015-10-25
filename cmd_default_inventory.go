@@ -39,8 +39,8 @@ func (c *CmdDefaultInventory) Run(args []string) int {
 	// https://github.com/mitchellh/cli/blob/master/cli.go#L165-L172
 
 	c.InitFlagSet()
-	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
-	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
+	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory (the default behavior).")
+	c.FS.StringVar(&c.Host, "host", "", "Generate a host-specific inventory for this host.")
 	if err := c.FS.Parse(args); err != nil {
 		if err != flag.ErrHelp {
 			c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
