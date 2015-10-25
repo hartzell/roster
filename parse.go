@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/hashicorp/terraform/builtin/providers/aws"
+	"github.com/hashicorp/terraform/builtin/providers/cloudstack"
 	"github.com/hashicorp/terraform/builtin/providers/digitalocean"
 	"github.com/hashicorp/terraform/builtin/providers/openstack"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -42,6 +44,20 @@ func parseState(state terraform.State) ([]*InstanceInfo, error) {
 						errors.New("Unable to parse digitalocean_droplet resource")
 				}
 				instances = append(instances, info)
+			case "aws_instance":
+				info, err := parse_aws_instance(rs)
+				if err != nil {
+					return []*InstanceInfo{},
+						errors.New("Unable to parse aws_instance resource")
+				}
+				instances = append(instances, info)
+			case "cloudstack_instance":
+				info, err := parse_cloudstack_instance(rs)
+				if err != nil {
+					return []*InstanceInfo{},
+						errors.New("Unable to parse aws_instance resource")
+				}
+				instances = append(instances, info)
 			}
 		}
 	}
@@ -69,6 +85,67 @@ func parse_digitalocean_droplet(rs *terraform.ResourceState) (*InstanceInfo, err
 		return nil, fmt.Errorf("Unable to read ipv4_address field: %s", err)
 	}
 	info.Address = accessResult.ValueOrZero(instanceSchema["ipv4_address"]).(string)
+
+	return &info, nil
+}
+
+// BUG(hartzell@alerce.com) parse_aws_instance doesn't do anything
+// sensible with for an instance name.  What to do?
+
+func parse_aws_instance(rs *terraform.ResourceState) (*InstanceInfo, error) {
+	info := InstanceInfo{}
+
+	provider := aws.Provider().(*schema.Provider)
+	instanceSchema := provider.ResourcesMap["aws_instance"].Schema
+	stateReader := &schema.MapFieldReader{
+		Schema: instanceSchema,
+		Map:    schema.BasicMapReader(rs.Primary.Attributes),
+	}
+
+	// nameResult, err := stateReader.ReadField([]string{"id"})
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Unable to read id field: %s", err)
+	// }
+	// info.Name = nameResult.ValueOrZero(instanceSchema["id"]).(string)
+	info.Name = "moose"
+
+	accessResult, err := stateReader.ReadField([]string{"public_ip"})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read a public_ip field: %s", err)
+	}
+	info.Address = accessResult.ValueOrZero(instanceSchema["public_ip"]).(string)
+	if info.Address == "" {
+		accessResult, err := stateReader.ReadField([]string{"private_ip"})
+		if err != nil {
+			return nil, fmt.Errorf("Unable to read a private_ip field: %s", err)
+		}
+		info.Address = accessResult.ValueOrZero(instanceSchema["private_ip"]).(string)
+	}
+
+	return &info, nil
+}
+
+func parse_cloudstack_instance(rs *terraform.ResourceState) (*InstanceInfo, error) {
+	info := InstanceInfo{}
+
+	provider := cloudstack.Provider().(*schema.Provider)
+	instanceSchema := provider.ResourcesMap["cloudstack_instance"].Schema
+	stateReader := &schema.MapFieldReader{
+		Schema: instanceSchema,
+		Map:    schema.BasicMapReader(rs.Primary.Attributes),
+	}
+
+	nameResult, err := stateReader.ReadField([]string{"name"})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read name field: %s", err)
+	}
+	info.Name = nameResult.ValueOrZero(instanceSchema["name"]).(string)
+
+	accessResult, err := stateReader.ReadField([]string{"ipaddress"})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read a ipaddress field: %s", err)
+	}
+	info.Address = accessResult.ValueOrZero(instanceSchema["ipaddress"]).(string)
 
 	return &info, nil
 }
