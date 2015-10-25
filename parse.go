@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/hashicorp/terraform/builtin/providers/digitalocean"
 	"github.com/hashicorp/terraform/builtin/providers/openstack"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -34,10 +35,42 @@ func parseState(state terraform.State) ([]*InstanceInfo, error) {
 						errors.New("Unable to parse openstack compute instance")
 				}
 				instances = append(instances, info)
+			case "digitalocean_droplet":
+				info, err := parse_digitalocean_droplet(rs)
+				if err != nil {
+					return []*InstanceInfo{},
+						errors.New("Unable to parse digitalocean_droplet resource")
+				}
+				instances = append(instances, info)
 			}
 		}
 	}
 	return instances, nil
+}
+
+func parse_digitalocean_droplet(rs *terraform.ResourceState) (*InstanceInfo, error) {
+	info := InstanceInfo{}
+
+	provider := digitalocean.Provider().(*schema.Provider)
+	instanceSchema := provider.ResourcesMap["digitalocean_droplet"].Schema
+	stateReader := &schema.MapFieldReader{
+		Schema: instanceSchema,
+		Map:    schema.BasicMapReader(rs.Primary.Attributes),
+	}
+
+	nameResult, err := stateReader.ReadField([]string{"name"})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read name field: %s", err)
+	}
+	info.Name = nameResult.ValueOrZero(instanceSchema["name"]).(string)
+
+	accessResult, err := stateReader.ReadField([]string{"ipv4_address"})
+	if err != nil {
+		return nil, fmt.Errorf("Unable to read ipv4_address field: %s", err)
+	}
+	info.Address = accessResult.ValueOrZero(instanceSchema["ipv4_address"]).(string)
+
+	return &info, nil
 }
 
 // Function parse_os_compute_instance_v2 uses terraform routines to

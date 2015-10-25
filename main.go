@@ -43,7 +43,6 @@ func doIt(ui cli.Ui, args []string) (int, error) {
 		"dump-template":    CmdDumpTemplateFactory(ui),
 		"execute-template": CmdExecuteTemplateFactory(ui),
 	}
-
 	exitStatus, err := c.Run()
 	return exitStatus, err
 }
