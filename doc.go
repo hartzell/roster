@@ -29,10 +29,11 @@
 //    OpenStack
 //    - the instance name is used as the Name
 //    - the access_ip_v4 is used as the Address
-//    - host_vars and groups can be specified in the metadata like so:
+//    - host_vars and groups can be specified in the resource configuration
+//      metadata section like so:
 //
 //        metadata {
-//            ansible_host_groups = "foo,  bar"
+//            ansible_groups = "foo,  bar"
 //       			ansible_host_vars = "color=red, importance=high"
 //        }
 //
