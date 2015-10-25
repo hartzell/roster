@@ -10,9 +10,9 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-func TestMain(t *testing.T) {
+func TestOpenStack(t *testing.T) {
 	cwd, err := os.Getwd()
-	err = os.Chdir("misc")
+	err = os.Chdir("misc/sample_states/openstack")
 	defer os.Chdir(cwd)
 
 	ui := new(cli.MockUi)
@@ -36,9 +36,9 @@ func TestMain(t *testing.T) {
 	}
 }
 
-func TestMainWithDir(t *testing.T) {
+func TestOpenStackWithDir(t *testing.T) {
 	ui := new(cli.MockUi)
-	exitStatus, err := doIt(ui, []string{"-dir", "misc"})
+	exitStatus, err := doIt(ui, []string{"-dir", "misc/sample_states/openstack"})
 
 	if exitStatus != 0 {
 		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
