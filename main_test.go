@@ -31,7 +31,7 @@ func TestOpenStack(t *testing.T) {
 	}
 	inventory.SortInventory(inv)
 
-	if !reflect.DeepEqual(inv, expected_list_inventory()) {
+	if !reflect.DeepEqual(inv, os_expected_list_inventory()) {
 		t.Error(fmt.Sprintf("Output was not as expected.\n%s", ui.OutputWriter.String()))
 	}
 }
@@ -53,12 +53,12 @@ func TestOpenStackWithDir(t *testing.T) {
 	}
 	inventory.SortInventory(inv)
 
-	if !reflect.DeepEqual(inv, expected_list_inventory()) {
+	if !reflect.DeepEqual(inv, os_expected_list_inventory()) {
 		t.Error(fmt.Sprintf("Output was not as expected.\n%s", ui.OutputWriter.String()))
 	}
 }
 
-func expected_list_inventory() *inventory.Inventory {
+func os_expected_list_inventory() *inventory.Inventory {
 	return &inventory.Inventory{
 		HostVars: inventory.HostVars{
 			"10.29.92.104": {
@@ -92,6 +92,48 @@ func expected_list_inventory() *inventory.Inventory {
 			},
 			"mj-other-0": inventory.Group{
 				Hosts: []string{"10.29.92.105"},
+			},
+		},
+	}
+}
+
+func TestDigitalOcean(t *testing.T) {
+	cwd, err := os.Getwd()
+	err = os.Chdir("misc/sample_states/digitalocean")
+	defer os.Chdir(cwd)
+
+	ui := new(cli.MockUi)
+	exitStatus, err := doIt(ui, []string{})
+
+	if exitStatus != 0 {
+		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("err was \"%s\", expected nil", err))
+	}
+
+	inv, err := inventory.NewFromJSON(ui.OutputWriter.String())
+	if err != nil {
+		fmt.Println("Unable to create inventory from output", err)
+	}
+	inventory.SortInventory(inv)
+
+	if !reflect.DeepEqual(inv, do_expected_list_inventory()) {
+		t.Error(fmt.Sprintf("Output was not as expected.\n%s", ui.OutputWriter.String()))
+	}
+}
+
+func do_expected_list_inventory() *inventory.Inventory {
+	return &inventory.Inventory{
+		Groups: inventory.Groups{
+			"puppy": inventory.Group{
+				Hosts: []string{"104.236.187.205"},
+			},
+			"kitty": inventory.Group{
+				Hosts: []string{"159.203.251.124"},
+			},
+			"master": inventory.Group{
+				Hosts: []string{"107.170.194.163"},
 			},
 		},
 	}
