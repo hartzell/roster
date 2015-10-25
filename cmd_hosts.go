@@ -12,19 +12,19 @@ import (
 //
 // Implement the "hosts" command
 
-type HostsCommand struct {
+type CmdHost struct {
 	CmdDefault
 }
 
 func CmdHostFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &CmdInventory{
+		return &CmdHost{
 			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
 }
 
-func (c *HostsCommand) Run(args []string) int {
+func (c *CmdHost) Run(args []string) int {
 	c.InitFlagSet()
 	if err := c.FS.Parse(args); err != nil {
 		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
@@ -65,10 +65,10 @@ func (c *HostsCommand) Run(args []string) int {
 	return 0
 }
 
-func (c *HostsCommand) Help() string {
+func (c *CmdHost) Help() string {
 	return "Generate an /etc/hosts fragment for the Terraform instances"
 }
 
-func (c *HostsCommand) Synopsis() string {
+func (c *CmdHost) Synopsis() string {
 	return "Generate an /etc/hosts fragment for the Terraform instances"
 }

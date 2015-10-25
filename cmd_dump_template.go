@@ -16,7 +16,7 @@ type CmdDumpTemplate struct {
 
 func CmdDumpTemplateFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &CmdInventory{
+		return &CmdDumpTemplate{
 			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}

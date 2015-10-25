@@ -19,7 +19,7 @@ type CmdExecuteTemplate struct {
 
 func CmdExecuteTemplateFactory(ui cli.Ui) func() (cli.Command, error) {
 	return func() (cli.Command, error) {
-		return &CmdInventory{
+		return &CmdExecuteTemplate{
 			CmdDefault: CmdDefault{Ui: ui},
 		}, nil
 	}
