@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/mitchellh/cli"
@@ -41,7 +42,9 @@ func (c *CmdDefaultInventory) Run(args []string) int {
 	c.FS.BoolVar(&c.List, "list", false, "Generate a full inventory")
 	c.FS.StringVar(&c.Host, "host", "", "The host for host-specific inventory")
 	if err := c.FS.Parse(args); err != nil {
-		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		if err != flag.ErrHelp {
+			c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		}
 		return 1
 	}
 

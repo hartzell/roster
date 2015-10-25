@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/mitchellh/cli"
@@ -26,7 +27,9 @@ func (c *CmdDumpTemplate) Run(args []string) int {
 	c.InitFlagSet()
 	c.FS.StringVar(&c.Template, "template", "", "The name of the template to dump.")
 	if err := c.FS.Parse(args); err != nil {
-		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		if err != flag.ErrHelp {
+			c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		}
 		return 1
 	}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 
 	"github.com/mitchellh/cli"
@@ -27,7 +28,9 @@ func CmdHostFactory(ui cli.Ui) func() (cli.Command, error) {
 func (c *CmdHost) Run(args []string) int {
 	c.InitFlagSet()
 	if err := c.FS.Parse(args); err != nil {
-		c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		if err != flag.ErrHelp {
+			c.Ui.Error(fmt.Sprintf("Unable to parse arguments: %s", err))
+		}
 		return 1
 	}
 
