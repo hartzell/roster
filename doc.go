@@ -21,8 +21,8 @@
 // two helper functions, groups and hostvars that make templates less
 // nasty by transforming the instanceInfo into slices of Group and
 // HostVar, respectively.  Slices are used so that it is easier to
-// avoid trailing commas when generating JSON,
-// e.g. http://stackoverflow.com/questions/21305865/golang-separating-items-with-comma-in-template
+// avoid trailing commas when generating JSON, using [this
+// technique](http://stackoverflow.com/questions/21305865/golang-separating-items-with-comma-in-template).
 //
 // Roster parses state data for instances from:
 //
@@ -65,7 +65,7 @@
 //        dump-template       Dump one of roster's built in templates.
 //        execute-template    Execute a user supplied template.
 //        hosts               Generate an /etc/hosts fragment for the Terraform instances
-//        inventory           (s) Generate an Ansible dynamic inventory
+//        inventory           Generate an Ansible dynamic inventory
 //
 //    $ ./roster inventory --help
 //    Usage of inventory:
