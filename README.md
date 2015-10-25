@@ -31,13 +31,13 @@ OpenStack
 - the access_ip_v4 is used as the Address
 - host_vars and groups can be specified in the metadata like so:
 
-    metadata {
-        ansible_host_groups = "foo,  bar"
-   			ansible_host_vars = "color=red, importance=high"
-    }
+        metadata {
+            ansible_host_groups = "foo,  bar"
+   		    ansible_host_vars = "color=red, importance=high"
+        }
 
-parsing those strings is very unsophisticated, I'm waiting for better
-use cases before I get fancy.
+  parsing those strings is very unsophisticated, I'm waiting for better
+  use cases before I get fancy.
 
 DigitalOcean
 - the name is used as the Name
