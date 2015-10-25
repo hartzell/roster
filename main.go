@@ -34,10 +34,6 @@ func doIt(ui cli.Ui, args []string) (int, error) {
 	c := cli.NewCLI("roster", "0.0.1")
 	c.Args = args
 	c.Commands = map[string]cli.CommandFactory{
-		// default command is "inventory", with some hacks for
-		// usage/synopsis, so its Factory takes diff arg than other
-		// factory...
-		"":                 CmdDefaultInventoryFactory(ui, c),
 		"inventory":        CmdInventoryFactory(ui),
 		"hosts":            CmdHostFactory(ui),
 		"dump-template":    CmdDumpTemplateFactory(ui),

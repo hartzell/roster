@@ -16,7 +16,7 @@ func TestOpenStack(t *testing.T) {
 	defer os.Chdir(cwd)
 
 	ui := new(cli.MockUi)
-	exitStatus, err := doIt(ui, []string{})
+	exitStatus, err := doIt(ui, []string{"inventory"})
 
 	if exitStatus != 0 {
 		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
@@ -38,7 +38,7 @@ func TestOpenStack(t *testing.T) {
 
 func TestOpenStackWithDir(t *testing.T) {
 	ui := new(cli.MockUi)
-	exitStatus, err := doIt(ui, []string{"-dir", "misc/fixtures/openstack"})
+	exitStatus, err := doIt(ui, []string{"inventory", "-dir", "misc/fixtures/openstack"})
 
 	if exitStatus != 0 {
 		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
@@ -103,7 +103,7 @@ func TestDigitalOcean(t *testing.T) {
 	defer os.Chdir(cwd)
 
 	ui := new(cli.MockUi)
-	exitStatus, err := doIt(ui, []string{})
+	exitStatus, err := doIt(ui, []string{"inventory"})
 
 	if exitStatus != 0 {
 		t.Error(fmt.Sprintf("exitStatus was %d, expected 0", exitStatus))
