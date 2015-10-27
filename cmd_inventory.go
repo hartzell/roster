@@ -102,5 +102,5 @@ func (c *CmdInventory) doFullInventory() error {
 }
 
 func (c *CmdInventory) Synopsis() string {
-	return "Generate an Ansible dynamic inventory"
+	return "Generate an Ansible dynamic inventory."
 }
