@@ -69,9 +69,9 @@ func (c *CmdHost) Run(args []string) int {
 }
 
 func (c *CmdHost) Help() string {
-	return "Generate an /etc/hosts fragment for the Terraform instances"
+	return "Generate an /etc/hosts fragment"
 }
 
 func (c *CmdHost) Synopsis() string {
-	return "Generate an /etc/hosts fragment for the Terraform instances"
+	return "Generate an /etc/hosts fragment"
 }
