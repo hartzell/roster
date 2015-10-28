@@ -68,10 +68,6 @@ func (c *CmdHost) Run(args []string) int {
 	return 0
 }
 
-func (c *CmdHost) Help() string {
-	return "Generate an /etc/hosts fragment."
-}
-
 func (c *CmdHost) Synopsis() string {
 	return "Generate an /etc/hosts fragment."
 }

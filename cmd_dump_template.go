@@ -48,10 +48,6 @@ func (c *CmdDumpTemplate) Run(args []string) int {
 	return 0
 }
 
-func (c *CmdDumpTemplate) Help() string {
-	return "(h) Dump one of roster's built in templates."
-}
-
 func (c *CmdDumpTemplate) Synopsis() string {
 	return "Dump one of roster's built in templates."
 }
