@@ -10,6 +10,8 @@ import (
 
 var isDev bool
 
+const Version = "0.0.1"
+
 func main() {
 
 	isDev = os.Getenv("ROSTER_DEV") == "1"
@@ -47,7 +49,7 @@ func doIt(ui cli.Ui, args []string) (int, error) {
 		return command.Run(args), nil
 	}
 
-	c := cli.NewCLI("roster", "0.0.1")
+	c := cli.NewCLI("roster", Version)
 	c.Args = args
 	c.Commands = map[string]cli.CommandFactory{
 		"inventory":        CmdInventoryFactory(ui),
