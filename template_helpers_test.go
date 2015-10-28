@@ -25,26 +25,13 @@ func TestGroups(t *testing.T) {
 		&Group{Name: "g1", Hosts: []string{"192.168.1.1", "192.168.1.2"}},
 		&Group{Name: "g2", Hosts: []string{"192.168.1.1"}},
 		&Group{Name: "g3", Hosts: []string{"192.168.1.2"}},
-	}
-
-	got := Groups(input, false)
-	sort.Sort(ByName(got))
-	if !reflect.DeepEqual(got, expect) {
-		t.Fail()
-	}
-
-	// if you include a group for each host too, expect this...
-	expect_more := []*Group{
-		&Group{Name: "g1", Hosts: []string{"192.168.1.1", "192.168.1.2"}},
-		&Group{Name: "g2", Hosts: []string{"192.168.1.1"}},
-		&Group{Name: "g3", Hosts: []string{"192.168.1.2"}},
 		&Group{Name: "i_a", Hosts: []string{"192.168.1.1"}},
 		&Group{Name: "i_b", Hosts: []string{"192.168.1.2"}},
 	}
 
-	got = Groups(input, true)
+	got := Groups(input)
 	sort.Sort(ByName(got))
-	if !reflect.DeepEqual(got, expect_more) {
+	if !reflect.DeepEqual(got, expect) {
 		t.Fail()
 	}
 }
@@ -52,11 +39,7 @@ func TestGroups(t *testing.T) {
 // TestTmptyInput checks that calling groups with
 // []*InstanceInfo{} returns an empty slice of results.
 func TestEmptyInput(t *testing.T) {
-	got := Groups([]*InstanceInfo{}, true)
-	if len(got) != 0 {
-		t.Fail()
-	}
-	got = Groups([]*InstanceInfo{}, false)
+	got := Groups([]*InstanceInfo{})
 	if len(got) != 0 {
 		t.Fail()
 	}

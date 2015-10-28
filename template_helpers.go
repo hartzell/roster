@@ -16,16 +16,15 @@ type Group struct {
 // should include a unique group for each host by itself, in addition
 // to any groups mentioned in instance metadata.  There has to be a
 // better way...
-func Groups(instances []*InstanceInfo, groupJustForHost bool) []*Group {
+func Groups(instances []*InstanceInfo) []*Group {
 	groups := map[string]*Group{}
 	for _, i := range instances {
-		if groupJustForHost {
-			// add a group for each individual
-			if groups[i.Name] == nil {
-				groups[i.Name] = &Group{Name: i.Name}
-			}
-			groups[i.Name].Hosts = append(groups[i.Name].Hosts, i.Address)
+		// add a group for each individual
+		if groups[i.Name] == nil {
+			groups[i.Name] = &Group{Name: i.Name}
 		}
+		groups[i.Name].Hosts = append(groups[i.Name].Hosts, i.Address)
+
 		// walk over the individuals group and add it to them
 		for _, g := range i.Groups {
 			// groups[g] = append(groups[g], i.Address)

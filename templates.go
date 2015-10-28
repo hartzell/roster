@@ -188,13 +188,13 @@ var _escData = map[string]*_escFile{
 
 	"/templates/dynamicInventoryTemplate": {
 		local:   "templates/dynamicInventoryTemplate",
-		size:    581,
-		modtime: 1445362749,
+		size:    571,
+		modtime: 1445993689,
 		compressed: `
-H4sIAAAJbogA/4SRzaqEMAyF9z5FEJfiAwh3f1d36eYySMGOo4w61B8GSt59mrRWLcq4EDk5+RJPdATm
-0bq5w2MYp0WoETJEVuOyk5OIc7AmllYTqaZNib6WkDR9Jd8pJFSF/OeAYrZ1IKZay75yfA/Vuh1tc/Zr
-XohHemvIC2GtpTDgFdteIHfYJfsTnWSmVwrxnEk6a8VQtF/HOTy9VsP8Mv8IkyKaKwSRsImWD9zXsbgt
-2b/tHtyADvDvh5FShkdwBErU57UZv9/iJJ9btE9oreInAAD///qI9C9FAgAA
+H4sIAAAJbogA/4SRTYqEMBCF956iEJfiAYTZz2qWboZBAmZspdXGPxqKununKpqorbQLkZeXr4pPDMA8
+iNU/3LphnFU/QEIkaZg3elRhCrYk0Vri1FzrVVtqiKq20M8YIj6F9GuHErZtEMWIui0WvoMi1oO9nHyb
+F9GeXhvyzFhbyQx4xdYXyA12Tn5Uo4XpkkzdJ47OrtIxtF/7OTK97Lvp4XW92ZBz3tsXr2Usu0nVb3ww
+z9p/3RxO8qP6hcAenSVf/PwHTqz8BVsv6ym9AgAA///5OJFuOwIAAA==
 `,
 	},
 
