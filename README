@@ -11,7 +11,7 @@ forward. More info in [terraform issue
 It uses Go templates to generate it's output. One can dump out these
 templates, e.g.:
 
-    $ ./roster dump-template /templates/dynamicInventoryTemplate
+    $ ./roster dump-template /templates/dynamic-inventory
 
 and see what it's doing. One can also supply one's own templates
 
@@ -103,7 +103,7 @@ Roster parses state data for instances from:
         -dir string
           	The path to the terraform directory (default ".")
         -template string
-          	The name of the template to dump: /templates/{dynamicInventoryTemplate,etcHostsTemplate}.
+          	The name of the template to dump: /templates/{dynamic-inventory,etc-hosts}.
 
       $ ./roster execute-template --help
       Usage of inventory:

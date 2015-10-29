@@ -81,20 +81,20 @@ func (c *CmdInventory) doFullInventory() error {
 		"hostvars": HostVars,
 	}
 
-	tString, err := FSString(isDev, "/templates/dynamicInventoryTemplate")
+	tString, err := FSString(isDev, "/templates/dynamic-inventory")
 	if err != nil {
-		return fmt.Errorf("Unable to read dynamicInventoryTemplate: %s", err)
+		return fmt.Errorf("Unable to read dynamic-inventory: %s", err)
 	}
 
-	t, err := template.New("dynamicInventoryTemplate").Funcs(funcMap).Parse(tString)
+	t, err := template.New("dynamic-inventory").Funcs(funcMap).Parse(tString)
 	if err != nil {
-		return fmt.Errorf("Unable to parse dynamicInventoryTemplate: %s", err)
+		return fmt.Errorf("Unable to parse dynamic-inventory: %s", err)
 	}
 
 	output := bytes.NewBuffer([]byte{})
 	err = t.Execute(output, instances)
 	if err != nil {
-		return fmt.Errorf("Unable to execute dynamicInventoryTemplate: %s", err)
+		return fmt.Errorf("Unable to execute dynamic-inventory: %s", err)
 	}
 
 	c.Ui.Output(output.String())

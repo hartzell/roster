@@ -45,15 +45,15 @@ func (c *CmdHost) Run(args []string) int {
 		return 1
 	}
 
-	tString, err := FSString(isDev, "/templates/etcHostsTemplate")
+	tString, err := FSString(isDev, "/templates/etc-hosts")
 	if err != nil {
-		c.Ui.Error(fmt.Sprintf("Unable to read etcHostsTemplate: %s", err))
+		c.Ui.Error(fmt.Sprintf("Unable to read etc-hosts: %s", err))
 		return 1
 	}
 
-	t, err := template.New("etcHostsTemplate").Parse(tString)
+	t, err := template.New("etc-hosts").Parse(tString)
 	if err != nil {
-		c.Ui.Error(fmt.Sprintf("Unable to parse etcHostsTemplate: %s", err))
+		c.Ui.Error(fmt.Sprintf("Unable to parse etc-hosts: %s", err))
 		return 1
 	}
 

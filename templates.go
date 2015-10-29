@@ -186,8 +186,8 @@ func FSMustString(useLocal bool, name string) string {
 
 var _escData = map[string]*_escFile{
 
-	"/templates/dynamicInventoryTemplate": {
-		local:   "templates/dynamicInventoryTemplate",
+	"/templates/dynamic-inventory": {
+		local:   "templates/dynamic-inventory",
 		size:    571,
 		modtime: 1445993689,
 		compressed: `
@@ -198,8 +198,8 @@ z9p/3RxO8qP6hcAenSVf/PwHTqz8BVsv6ym9AgAA///5OJFuOwIAAA==
 `,
 	},
 
-	"/templates/etcHostsTemplate": {
-		local:   "templates/etcHostsTemplate",
+	"/templates/etc-hosts": {
+		local:   "templates/etc-hosts",
 		size:    104,
 		modtime: 1445211142,
 		compressed: `
