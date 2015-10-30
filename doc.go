@@ -1,6 +1,6 @@
-// Roster is a tool for working transforming Terraform state
-// information into other forms (it's original calling was as an
-// Ansible dynamic inventory provider).
+// Roster is a tool for transforming Terraform state information into
+// other forms (it's original calling was as an Ansible dynamic
+// inventory provider).
 //
 // It uses terraform routines to work with the state information,
 // which seems better than reverse engineering the state files

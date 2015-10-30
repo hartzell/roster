@@ -1,4 +1,4 @@
-Roster is a tool for working transforming Terraform state information into
+Roster is a tool for transforming Terraform state information into
 other forms (it's original calling was as an Ansible dynamic inventory
 provider).
 
